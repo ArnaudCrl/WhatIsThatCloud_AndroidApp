@@ -3,10 +3,13 @@ package com.example.cameratest
 import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import kotlinx.android.synthetic.main.activity_main.*
@@ -18,12 +21,13 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.net.URI
 
 
 private const val REQUEST_CODE_TAKE_PICTURE = 1
 private const val REQUEST_CODE_SELECT_PICTURE = 2
 private lateinit var photoFile: File
-private const val FILE_NAME = "photo.jpg"
+private const val FILE_NAME = "tempPhoto.jpg"
 
 
 
@@ -35,7 +39,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         btnTakePic.setOnClickListener{
             takePicture()
         }
@@ -44,15 +47,12 @@ class MainActivity : AppCompatActivity() {
             openGalery()
         }
 
-        getMarsRealEstateProperties()
         btnDisplayResult.setOnClickListener{
-            println("LA REPONSE EST :")
-            println(result)
-            txt_testResult.text = result
-
+            if (::photoFile.isInitialized) uploadImage() else Toast.makeText(this, "No file to upload", Toast.LENGTH_SHORT).show()
         }
-
     }
+
+
 
     private fun takePicture() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -80,18 +80,24 @@ class MainActivity : AppCompatActivity() {
         return File.createTempFile(fileName, ".jpg", StorageDirectory)
     }
 
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
-            // val imageBitmap = data?.extras?.get("data") as Bitmap
             val takenImage = BitmapFactory.decodeFile(photoFile.absolutePath)
             imageView.setImageBitmap(takenImage)
-            uploadImage()
+
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
 
         if (requestCode == REQUEST_CODE_SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
-            val uri = data!!.data
+            val uri = data?.data
+
+            if (uri != null) {
+                saveImageToTempFile(uri)
+            }
+
             imageView.setImageURI(uri)
         } else {
             super.onActivityResult(requestCode, resultCode, data)
@@ -99,24 +105,15 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    fun saveImageToTempFile(uri: Uri){
+        photoFile = getPhotoFile(FILE_NAME)
+        contentResolver.openInputStream(uri)?.copyTo(photoFile.outputStream())
+    }
+
 
     private var viewModelJob = Job()
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main )
     private var result : String? = ""
-
-    private fun getMarsRealEstateProperties() {
-        coroutineScope.launch {
-            // Get the Deferred object for our Retrofit request
-            var getPropertiesDeferred = API_obj.retrofitService.getProperties()
-            try {
-                // Await the completion of our Retrofit request
-                result = "Success: ${getPropertiesDeferred.await()}"
-            } catch (e: Exception) {
-                result = "Failure: ${e.message}"
-            }
-        }
-    }
-
 
     private fun uploadImage() {
         coroutineScope.launch {
@@ -127,6 +124,7 @@ class MainActivity : AppCompatActivity() {
             try {
                 // Await the completion of our Retrofit request
                 result = "Success: ${getPropertiesDeferred.await()}"
+                txt_testResult.text = result
                 println(result)
             } catch (e: Exception) {
                 result = "Failure: ${e.message}"
