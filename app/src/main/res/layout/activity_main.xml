@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#BEFAEE"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    tools:visibility="visible">
+    tools:context=".MainActivity">
 
     <LinearLayout
+        android:id="@+id/LinearLayoutCameraGalery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:gravity="center_horizontal"
         android:orientation="horizontal">
 
@@ -37,20 +38,30 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="400dp"
-        android:layout_marginTop="10dp"
-        android:background="#00BEFAEE"
+        android:layout_above="@+id/txtUserNotification"
+        android:layout_below="@+id/LinearLayoutCameraGalery"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="10dp"
         android:contentDescription="@string/picturedisplay" />
+
+
+    <Button
+        android:id="@+id/btnDisplayResult"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
+        android:text="Upload"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/txtUserNotification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/btnDisplayResult"
+        android:layout_marginBottom="25dp"
         android:isScrollContainer="true"
         android:textAlignment="center" />
-
-    <Button
-        android:id="@+id/btnDisplayResult"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Upload" />
-</LinearLayout>
+</RelativeLayout>

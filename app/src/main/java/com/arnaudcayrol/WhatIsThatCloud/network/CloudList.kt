@@ -15,7 +15,7 @@ class CloudList  (
     val stratus: Double
 ) : Serializable {
 
-    private val result_list= mapOf(
+     val result_list= listOf(
         "altocumulus" to altocumulus,
         "altostratus" to altostratus,
         "cirrocumuls" to cirrocumuls,
@@ -26,17 +26,17 @@ class CloudList  (
         "nimbostratus" to nimbostratus,
         "stratocumulus" to stratocumulus,
         "stratus" to stratus
-    )
+    ).sortedByDescending(){ it.second }
+
 
     fun getBest(): String {
-        var max_key = ""
-        var max_value = 0.0
-        for (elt in result_list){
-            if (elt.value > max_value){
-                max_value = elt.value
-                max_key = elt.key
-            }
-        }
-        return "The most plausible result is ${max_key} with ${(max_value * 100).toInt()}% probability"
+        return "The most plausible result is ${result_list[0].first} with ${(result_list[0].second * 100).toInt()}% probability"
+    }
+
+    fun getBests(): String {
+        return "RESULT :\n" +
+                "${result_list[0].first} with ${(result_list[0].second * 100).toInt()}% confidence\n" +
+                "${result_list[1].first} with ${(result_list[1].second * 100).toInt()}% confidence\n" +
+                "${result_list[2].first} with ${(result_list[2].second * 100).toInt()}% confidence"
     }
 }
