@@ -1,10 +1,8 @@
-package com.example.cameratest
+package com.arnaudcayrol.WhatIsThatCloud
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.cameratest.network.CloudList
-import kotlinx.android.synthetic.main.activity_main.*
+import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
 import kotlinx.android.synthetic.main.activity_result.*
 
 class ResultActivity : AppCompatActivity() {

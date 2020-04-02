@@ -1,4 +1,4 @@
-package com.example.cameratest.network
+package com.arnaudcayrol.WhatIsThatCloud.network
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -6,7 +6,6 @@ import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part

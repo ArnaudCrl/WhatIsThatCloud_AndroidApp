@@ -1,4 +1,4 @@
-package com.example.cameratest
+package com.arnaudcayrol.WhatIsThatCloud
 
 import android.app.Activity
 import android.content.Intent
@@ -10,10 +10,9 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.example.cameratest.network.API_obj
-import com.example.cameratest.network.CloudList
+import com.arnaudcayrol.WhatIsThatCloud.network.API_obj
+import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         photoFile = getPhotoFile(FILE_NAME)
 
-        val fileProvider = FileProvider.getUriForFile(this, "com.example.cameratest.fileprovider", photoFile)
+        val fileProvider = FileProvider.getUriForFile(this, "com.arnaudcayrol.WhatIsThatCloud.fileprovider", photoFile)
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
 
         if (takePictureIntent.resolveActivity(this.packageManager) != null) {

@@ -1,4 +1,4 @@
-package com.example.cameratest.network
+package com.arnaudcayrol.WhatIsThatCloud.network
 
 import java.io.Serializable
 

@@ -1,4 +1,4 @@
-package com.example.cameratest
+package com.arnaudcayrol.WhatIsThatCloud
 
 import org.junit.Test
 
