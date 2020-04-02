@@ -3,15 +3,17 @@ package com.example.cameratest
 import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.example.cameratest.network.API_obj
+import com.example.cameratest.network.CloudList
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +23,6 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
-import java.net.URI
 
 
 private const val REQUEST_CODE_TAKE_PICTURE = 1
@@ -48,10 +49,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnDisplayResult.setOnClickListener{
-            if (::photoFile.isInitialized) uploadImage() else Toast.makeText(this, "No file to upload", Toast.LENGTH_SHORT).show()
+            if (::photoFile.isInitialized) {
+                uploadImage()
+                btnDisplayResult?.isEnabled = false
+                btnDisplayResult?.setBackgroundColor(Color.parseColor("#a1a1a1"));
+            } else {
+                Toast.makeText(this, "No file to upload", Toast.LENGTH_SHORT).show()
+            }
         }
+
     }
 
+    override fun onResume() {
+        super.onResume()
+        btnDisplayResult?.setBackgroundColor(Color.WHITE);
+        btnDisplayResult?.isEnabled = true
+        txtUserNotification.text = ""
+    }
 
 
     private fun takePicture() {
@@ -86,19 +100,15 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
             val takenImage = BitmapFactory.decodeFile(photoFile.absolutePath)
             imageView.setImageBitmap(takenImage)
-
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
         }
 
         if (requestCode == REQUEST_CODE_SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
-
             if (uri != null) {
                 saveImageToTempFile(uri)
             }
-
             imageView.setImageURI(uri)
+
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
@@ -111,26 +121,36 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private var viewModelJob = Job()
-    private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main )
-    private var result : String? = ""
+//    private var viewModelJob = Job()
+//    private val coroutineScope = 
 
     private fun uploadImage() {
-        coroutineScope.launch {
-            // Get the Deferred object for our Retrofit request
-            var fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile);
+        txtUserNotification.text = "Awaiting server Response ..."
+        CoroutineScope(Job() + Dispatchers.Main ).launch {
+
+            // Creating the request to the web server
+            val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile);
             val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", photoFile.getName(), fileReqBody)
-            var getPropertiesDeferred = API_obj.retrofitService.uploadFile(part)
+            val getPropertiesDeferred = API_obj.retrofitService.uploadFile(part)
+
             try {
                 // Await the completion of our Retrofit request
-                result = "Success: ${getPropertiesDeferred.await()}"
-                txt_testResult.text = result
-                println(result)
+                val cloudList : CloudList = getPropertiesDeferred.await()
+
+                // Passing the result to ResultActivity
+                val intent = Intent(getApplicationContext(), ResultActivity::class.java)
+                intent.putExtra("CloudList", cloudList)
+                startActivity(intent)
+
             } catch (e: Exception) {
-                result = "Failure: ${e.message}"
-                println(result)
+                Toast.makeText(getApplicationContext(), "Failure: ${e.message}", Toast.LENGTH_LONG).show()
+                println("Failure: ${e.message}")
+                btnDisplayResult?.setBackgroundColor(Color.WHITE);
+                btnDisplayResult?.isEnabled = true
+                txtUserNotification.text = ""
             }
         }
+
     }
 
 }

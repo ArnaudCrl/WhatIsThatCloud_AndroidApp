@@ -37,14 +37,15 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="400dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:background="#00BEFAEE"
         android:contentDescription="@string/picturedisplay" />
 
     <TextView
-        android:id="@+id/txt_testResult"
+        android:id="@+id/txtUserNotification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:isScrollContainer="true"
         android:textAlignment="center" />
 
     <Button
