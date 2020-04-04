@@ -1,7 +1,9 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
@@ -34,6 +36,8 @@ private const val FILE_NAME = "tempPhoto.jpg"
 class MainActivity : AppCompatActivity() {
 
 
+//    var icon = BitmapFactory.decodeResource(resources, android.R.drawable.alert_dark_frame)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,17 +55,23 @@ class MainActivity : AppCompatActivity() {
             if (::photoFile.isInitialized) {
                 uploadImage()
                 btnDisplayResult?.isEnabled = false
-                btnDisplayResult?.setBackgroundColor(Color.parseColor("#a1a1a1"));
+                btnDisplayResult?.setBackgroundColor(Color.parseColor("#a1a1a1"))
             } else {
                 Toast.makeText(this, "No file to upload", Toast.LENGTH_SHORT).show()
             }
         }
 
+
+
+
+
     }
+
+
 
     override fun onResume() {
         super.onResume()
-        btnDisplayResult?.setBackgroundColor(Color.WHITE);
+        btnDisplayResult?.setBackgroundColor(Color.WHITE)
         btnDisplayResult?.isEnabled = true
         txtUserNotification.text = ""
     }
@@ -89,8 +99,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getPhotoFile(fileName: String): File {
-        val StorageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(fileName, ".jpg", StorageDirectory)
+        val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(fileName, ".jpg", storageDirectory)
     }
 
 
@@ -114,7 +124,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun saveImageToTempFile(uri: Uri){
+    private fun saveImageToTempFile(uri: Uri){
         photoFile = getPhotoFile(FILE_NAME)
         contentResolver.openInputStream(uri)?.copyTo(photoFile.outputStream())
     }
@@ -123,28 +133,30 @@ class MainActivity : AppCompatActivity() {
 //    private var viewModelJob = Job()
 //    private val coroutineScope = 
 
+    @SuppressLint("SetTextI18n")
     private fun uploadImage() {
         txtUserNotification.text = "Awaiting server Response ..."
         CoroutineScope(Job() + Dispatchers.Main ).launch {
 
             // Creating the request to the web server
-            val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile);
-            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", photoFile.getName(), fileReqBody)
-            val getPropertiesDeferred = API_obj.retrofitService.uploadFile(part)
+            val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile)
+            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", photoFile.name, fileReqBody)
+            val getPropertiesDeferred = API_obj.retrofitService.uploadFileAsync(part)
 
             try {
                 // Await the completion of our Retrofit request
                 val cloudList : CloudList = getPropertiesDeferred.await()
 
                 // Passing the result to ResultActivity
-                val intent = Intent(getApplicationContext(), ResultActivity::class.java)
+                val intent = Intent(applicationContext, ResultActivity::class.java)
                 intent.putExtra("CloudList", cloudList)
+                intent.putExtra("UserPicture", photoFile.absolutePath)
                 startActivity(intent)
 
             } catch (e: Exception) {
-                Toast.makeText(getApplicationContext(), "Failure: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "Failure: ${e.message}", Toast.LENGTH_LONG).show()
                 println("Failure: ${e.message}")
-                btnDisplayResult?.setBackgroundColor(Color.WHITE);
+                btnDisplayResult?.setBackgroundColor(Color.WHITE)
                 btnDisplayResult?.isEnabled = true
                 txtUserNotification.text = ""
             }

@@ -37,7 +37,7 @@ interface WebServerAPI {
 
     @Multipart
     @POST("/analyze")
-        fun uploadFile(@Part file: MultipartBody.Part?): Deferred<CloudList>
+        fun uploadFileAsync(@Part file: MultipartBody.Part?): Deferred<CloudList>
 }
 
 /**
