@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="5dp"
+    android:background="#FFFDE6"
     tools:context=".ResultActivity">
 
 
@@ -22,9 +23,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/recyclerViewClouds"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="10dp"
         android:fontFamily="sans-serif"
-        android:text="CLOUDTYPE \n XX% confidence"
+        android:text="Cumulus \n90% certainty"
         android:textAlignment="textStart"
         android:textSize="30sp"
         android:textStyle="bold" />
@@ -32,11 +33,12 @@
     <ImageView
         android:id="@+id/picUserPicture"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/result1"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        app:srcCompat="@drawable/cumulus_1" />
 
 
 </RelativeLayout>

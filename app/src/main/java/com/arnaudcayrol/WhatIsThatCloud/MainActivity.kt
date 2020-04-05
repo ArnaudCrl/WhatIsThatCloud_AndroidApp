@@ -1,12 +1,12 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -23,20 +23,18 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 
 
 private const val REQUEST_CODE_TAKE_PICTURE = 1
 private const val REQUEST_CODE_SELECT_PICTURE = 2
 private lateinit var photoFile: File
-private const val FILE_NAME = "tempPhoto.jpg"
-
+private lateinit var photoFile224: File
 
 
 class MainActivity : AppCompatActivity() {
-
-
-//    var icon = BitmapFactory.decodeResource(resources, android.R.drawable.alert_dark_frame)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,11 +58,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "No file to upload", Toast.LENGTH_SHORT).show()
             }
         }
-
-
-
-
-
     }
 
 
@@ -79,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun takePicture() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        photoFile = getPhotoFile(FILE_NAME)
+        photoFile = getPhotoFile("tempPhoto.jpg")
 
         val fileProvider = FileProvider.getUriForFile(this, "com.arnaudcayrol.WhatIsThatCloud.fileprovider", photoFile)
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
@@ -106,41 +99,43 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        var uri: Uri? = null
+
         if (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
-            val takenImage = BitmapFactory.decodeFile(photoFile.absolutePath)
-            imageView.setImageBitmap(takenImage)
+            uri = Uri.fromFile(photoFile)
         }
 
         if (requestCode == REQUEST_CODE_SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
-            val uri = data?.data
-            if (uri != null) {
-                saveImageToTempFile(uri)
-            }
-            imageView.setImageURI(uri)
-
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
+            uri = data?.data!!
         }
+
+        else super.onActivityResult(requestCode, resultCode, data)
+
+
+        imageView.setImageURI(uri)
+        if (uri != null) {
+            photoFile224 = resizeTo224(uri)
+            saveImageToTempFile(uri, "tempPhoto.jpg")
+        }
+
     }
 
 
-    private fun saveImageToTempFile(uri: Uri){
-        photoFile = getPhotoFile(FILE_NAME)
+
+    private fun saveImageToTempFile(uri: Uri, filename: String){
+        photoFile = getPhotoFile(filename)
         contentResolver.openInputStream(uri)?.copyTo(photoFile.outputStream())
     }
 
 
-//    private var viewModelJob = Job()
-//    private val coroutineScope = 
 
-    @SuppressLint("SetTextI18n")
     private fun uploadImage() {
         txtUserNotification.text = "Awaiting server Response ..."
         CoroutineScope(Job() + Dispatchers.Main ).launch {
 
-            // Creating the request to the web server
-            val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile)
-            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", photoFile.name, fileReqBody)
+            // Creating the request to the web server, sending a 224x224 px image
+            val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile224)
+            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", photoFile224?.name, fileReqBody)
             val getPropertiesDeferred = API_obj.retrofitService.uploadFileAsync(part)
 
             try {
@@ -161,7 +156,29 @@ class MainActivity : AppCompatActivity() {
                 txtUserNotification.text = ""
             }
         }
+    }
 
+    private fun saveBitmapToJPG(bmp: Bitmap): File {
+        val bytes = ByteArrayOutputStream()
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val f =  File.createTempFile("tempfile", ".jpg", storageDirectory)
+        val fo = FileOutputStream(f)
+        fo.write(bytes.toByteArray())
+        fo.close()
+        return f
+    }
+
+    private fun resizeTo224(selectedPhotoUri: Uri): File {
+        val bitmap =
+            if (Build.VERSION.SDK_INT < 28) {
+                MediaStore.Images.Media.getBitmap(this.contentResolver, selectedPhotoUri)
+            } else {
+                val source = ImageDecoder.createSource(this.contentResolver, selectedPhotoUri)
+                ImageDecoder.decodeBitmap(source)
+            }
+        val bitmap224 = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
+        return saveBitmapToJPG(bitmap224)
     }
 
 }

@@ -5,7 +5,7 @@ import java.io.Serializable
 class CloudList  (
     private val altocumulus: Double,
     private val altostratus: Double,
-    private val cirrocumuls: Double,
+    private val cirrocumulus: Double,
     private val cirrostratus: Double,
     private val cirrus: Double,
     private val cumulonimbus: Double,
@@ -18,7 +18,7 @@ class CloudList  (
      val resultList= listOf(
         "Altocumulus" to altocumulus,
         "Altostratus" to altostratus,
-        "Cirrocumuls" to cirrocumuls,
+        "Cirrocumulus" to cirrocumulus,
         "Cirrostratus" to cirrostratus,
         "Cirrus" to cirrus,
         "Cumulonimbus" to cumulonimbus,
