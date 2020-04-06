@@ -11,7 +11,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 
 private const val BASE_URL =
-    "https://nuagenet3.herokuapp.com/"
+    "https://whatisthatcloud.herokuapp.com/"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -38,7 +38,14 @@ interface WebServerAPI {
     @Multipart
     @POST("/analyze")
         fun uploadFileAsync(@Part file: MultipartBody.Part?): Deferred<CloudList>
+
+
+    @Multipart
+    @POST("/feedback")
+        fun uploadFeedbackAsync(@Part file: MultipartBody.Part?): Deferred<Feedback>
 }
+
+
 
 /**
  * A public Api object that exposes the lazy-initialized Retrofit service

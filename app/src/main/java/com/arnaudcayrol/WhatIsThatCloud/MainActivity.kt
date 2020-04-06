@@ -107,24 +107,20 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == REQUEST_CODE_SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
             uri = data?.data!!
+            photoFile = saveImageToTempFile(uri, "tempPhoto.jpg")
         }
 
         else super.onActivityResult(requestCode, resultCode, data)
 
-
         imageView.setImageURI(uri)
-        if (uri != null) {
-            photoFile224 = resizeTo224(uri)
-            saveImageToTempFile(uri, "tempPhoto.jpg")
-        }
-
+        if (uri != null) photoFile224 = resizeTo224(uri)
     }
 
 
-
-    private fun saveImageToTempFile(uri: Uri, filename: String){
-        photoFile = getPhotoFile(filename)
-        contentResolver.openInputStream(uri)?.copyTo(photoFile.outputStream())
+    private fun saveImageToTempFile(uri: Uri, filename: String) : File{
+        val file = getPhotoFile(filename)
+        contentResolver.openInputStream(uri)?.copyTo(file.outputStream())
+        return file
     }
 
 
@@ -162,7 +158,7 @@ class MainActivity : AppCompatActivity() {
         val bytes = ByteArrayOutputStream()
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val f =  File.createTempFile("tempfile", ".jpg", storageDirectory)
+        val f =  File.createTempFile("tempfile224", ".jpg", storageDirectory)
         val fo = FileOutputStream(f)
         fo.write(bytes.toByteArray())
         fo.close()

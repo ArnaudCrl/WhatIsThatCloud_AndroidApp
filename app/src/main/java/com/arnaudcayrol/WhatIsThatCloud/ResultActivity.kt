@@ -1,27 +1,46 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
+import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Bitmap.createScaledBitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.text.Spannable
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.widget.TextView
 import android.widget.TextView.BufferType
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.SnapHelper
+import com.arnaudcayrol.WhatIsThatCloud.network.API_obj
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
 import com.arnaudcayrol.WhatIsThatCloud.utils.ColorUtils
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_result.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 
 class ResultActivity : AppCompatActivity() {
 
+    lateinit var imageBitmap: Bitmap
     val recycler_view_clouds: ArrayList<Bitmap> = ArrayList()
+
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,10 +50,7 @@ class ResultActivity : AppCompatActivity() {
         val cloudList = intent.getSerializableExtra("CloudList") as? CloudList
         val photoPath = intent.getSerializableExtra("UserPicture") as? String
 
-        var imageBitmap = BitmapFactory.decodeFile(photoPath)
-
-//        imageBitmap = bitmapSquareCrop(imageBitmap)
-//        imageBitmap = roundBitmapEdge(imageBitmap)
+        imageBitmap = BitmapFactory.decodeFile(photoPath)
 
         picUserPicture.setImageBitmap(imageBitmap)
 
@@ -44,7 +60,49 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        uploadImage(saveBitmapToJPG(createScaledBitmap(imageBitmap, 500, 500, true)))
+    }
 
+    private fun uploadImage(photoFile224: File) {
+        CoroutineScope(Job() + Dispatchers.Main ).launch {
+
+            // Creating the request to the web server, sending a 224x224 px image
+            val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile224)
+            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", photoFile224?.name, fileReqBody)
+            val getResultDeffered = API_obj.retrofitService.uploadFeedbackAsync(part)
+            try {
+                println("Success: ${getResultDeffered.await().Result}")
+            } catch (e: Exception) {
+//                Toast.makeText(applicationContext, "Failure: ${e.message}", Toast.LENGTH_LONG).show()
+                println("Failure: ${e.message}")
+            }
+        }
+    }
+
+
+    private fun saveBitmapToJPG(bmp: Bitmap): File {
+        val bytes = ByteArrayOutputStream()
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val f =  File.createTempFile("tempfile224", ".jpg", storageDirectory)
+        val fo = FileOutputStream(f)
+        fo.write(bytes.toByteArray())
+        fo.close()
+        return f
+    }
+
+
+    // Writes the result in the form :
+    // CLOUD TYPE
+    // XX% confidence -> colored text based on percentage
+    private fun writeColoredText(textView: TextView, pair: Pair<String, Double>){
+        textView.setText("${pair.first}\n" + "${(pair.second * 100).toInt()}% confidence", BufferType.SPANNABLE)
+        val span = textView.text as Spannable
+        span.setSpan(ForegroundColorSpan(ColorUtils.getColor(pair.second.toFloat())), pair.first.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(AbsoluteSizeSpan(20, true), pair.first.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
 
 
     private fun setRecyclerList(best : String){
@@ -72,15 +130,9 @@ class ResultActivity : AppCompatActivity() {
     }
 
 
-    // Writes the result in the form :
-    // CLOUD TYPE
-    // XX% confidence -> colored text based on percentage
-    private fun writeColoredText(textView: TextView, pair: Pair<String, Double>){
-        textView.setText("${pair.first}\n" + "${(pair.second * 100).toInt()}% confidence", BufferType.SPANNABLE)
-        val span = textView.text as Spannable
-        span.setSpan(ForegroundColorSpan(ColorUtils.getColor(pair.second.toFloat())), pair.first.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        span.setSpan(AbsoluteSizeSpan(20, true), pair.first.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-    }
+
+
+
 
     private fun addAltocumulus(){
         recycler_view_clouds.add(BitmapFactory.decodeResource(resources, R.drawable.altocumulus_1))
