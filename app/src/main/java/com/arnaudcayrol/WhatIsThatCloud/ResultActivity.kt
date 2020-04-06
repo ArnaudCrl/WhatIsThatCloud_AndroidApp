@@ -11,6 +11,8 @@ import android.os.Environment
 import android.text.Spannable
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
+import android.view.View
+import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.TextView.BufferType
 import android.widget.Toast
@@ -40,6 +42,7 @@ class ResultActivity : AppCompatActivity() {
 
     lateinit var imageBitmap: Bitmap
     val recycler_view_clouds: ArrayList<Bitmap> = ArrayList()
+    var feedbackChoice: String = "don't know"
 
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -58,12 +61,39 @@ class ResultActivity : AppCompatActivity() {
             writeColoredText(result1, cloudList.resultList[0])
             setRecyclerList(cloudList.resultList[0].first)
         }
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         uploadImage(saveBitmapToJPG(createScaledBitmap(imageBitmap, 500, 500, true)))
     }
+
+    fun onRadioButtonClicked(view: View) {
+        if (view is RadioButton) {
+            // Is the button now checked?
+            val checked = view.isChecked
+
+            // Check which radio button was clicked
+            when (view.getId()) {
+                R.id.choice_correct ->
+                    if (checked) {
+                        feedbackChoice = "correct"
+                    }
+                R.id.choice_dont_know ->
+                    if (checked) {
+                        feedbackChoice = "don't know"
+                    }
+                R.id.choice_incorrect ->
+                    if (checked) {
+                        feedbackChoice = "incorrect"
+                    }
+            }
+        }
+    }
+
+
+
 
     private fun uploadImage(photoFile224: File) {
         CoroutineScope(Job() + Dispatchers.Main ).launch {

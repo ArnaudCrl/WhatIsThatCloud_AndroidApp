@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFDE6"
+    android:background="#404b69"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -20,17 +20,20 @@
             android:id="@+id/btnTakePic"
             style="@android:style/Widget.Holo.Button"
             android:layout_width="wrap_content"
-            android:layout_height="72dp"
+            android:layout_height="65dp"
             android:layout_weight="0.5"
+            android:background="@drawable/button_border"
+            android:fontFamily="@font/montserrat"
             android:text="TAKE PICTURE" />
 
         <Button
             android:id="@+id/btnOpenGalery"
             style="@android:style/Widget.Holo.Button"
             android:layout_width="wrap_content"
-            android:layout_height="72dp"
+            android:layout_height="65dp"
             android:layout_weight="0.5"
-            android:backgroundTint="#0B4AC5"
+            android:background="@drawable/button_border"
+            android:fontFamily="@font/montserrat"
             android:text="OPEN GALERY" />
     </LinearLayout>
 
@@ -42,7 +45,8 @@
         android:layout_below="@+id/LinearLayoutCameraGalery"
         android:layout_marginTop="25dp"
         android:layout_marginBottom="10dp"
-        android:contentDescription="@string/picturedisplay" />
+        android:contentDescription="@string/picturedisplay"
+        app:srcCompat="@drawable/cloud_sketch" />
 
 
     <Button
@@ -54,9 +58,12 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="25dp"
-        android:background="#D1D1D1"
-        android:text="Upload"
-        android:textAlignment="center" />
+        android:background="@drawable/oval_button"
+        android:fontFamily="@font/montserrat"
+        android:text="WHAT IS IT ?"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtUserNotification"
