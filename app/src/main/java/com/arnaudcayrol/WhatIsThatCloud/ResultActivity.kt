@@ -11,8 +11,6 @@ import android.text.Spannable
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.TextView.BufferType
@@ -40,7 +38,7 @@ class ResultActivity : AppCompatActivity() {
 
     lateinit var imageBitmap: Bitmap
     private val recycler_view_clouds: ArrayList<Bitmap> = ArrayList()
-    private var feedbackChoice: String = "don't know"
+    private var feedbackChoice: String = "NOFEEDBACK"
     private var userHasClicked : Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -62,17 +60,13 @@ class ResultActivity : AppCompatActivity() {
 
         feedback_choice.visibility = View.GONE
 
-
         btn_giveFeedback.setOnClickListener{
             if (!userHasClicked){
                 userHasClicked = true
                 feedback_choice.visibility = View.VISIBLE
-//                btn_giveFeedback.setBackgroundResource(R.drawable.toggle_on_btn)
             } else if (userHasClicked){
                 userHasClicked = false
                 feedback_choice.visibility = View.GONE
-//                btn_giveFeedback.setBackgroundResource(R.drawable.toggle_off_btn)
-
             }
         }
     }
@@ -91,19 +85,18 @@ class ResultActivity : AppCompatActivity() {
             when (view.getId()) {
                 R.id.choice_correct ->
                     if (checked) {
-                        feedbackChoice = "correct"
+                        feedbackChoice = "CORRECT"
                     }
                 R.id.choice_dont_know ->
                     if (checked) {
-                        feedbackChoice = "don't know"
+                        feedbackChoice = "UNKNOWN"
                     }
                 R.id.choice_incorrect ->
                     if (checked) {
-                        feedbackChoice = "incorrect"
+                        feedbackChoice = "WRONG"
                     }
             }
         }
-
         Handler().postDelayed({
             feedback_choice.visibility = View.GONE
             btn_giveFeedback.visibility = View.GONE
@@ -119,7 +112,7 @@ class ResultActivity : AppCompatActivity() {
 
             // Creating the request to the web server, sending a 224x224 px image
             val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile224)
-            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", photoFile224?.name, fileReqBody)
+            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", feedbackChoice, fileReqBody)
             val getResultDeffered = API_obj.retrofitService.uploadFeedbackAsync(part)
             try {
                 println("Success: ${getResultDeffered.await().Result}")
@@ -135,7 +128,7 @@ class ResultActivity : AppCompatActivity() {
         val bytes = ByteArrayOutputStream()
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
         val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val f =  File.createTempFile("tempfile224", ".jpg", storageDirectory)
+        val f =  File.createTempFile("tempfile", ".jpg", storageDirectory)
         val fo = FileOutputStream(f)
         fo.write(bytes.toByteArray())
         fo.close()
@@ -177,10 +170,6 @@ class ResultActivity : AppCompatActivity() {
 
         // Creates a horizontal Layout Manager
         recyclerViewClouds.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false)
-
-//        // Add a snap effect -> DOES NOT LOOK VERY GOOD
-//        val snap : SnapHelper = PagerSnapHelper()
-//        snap.attachToRecyclerView(recyclerViewClouds)
 
         // Access the RecyclerView Adapter and load the data into it
         recyclerViewClouds.adapter = RecyclerViewAdapter(recycler_view_clouds, this)
