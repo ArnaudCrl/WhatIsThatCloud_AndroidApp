@@ -1,8 +1,8 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
 import android.graphics.Bitmap
-import android.graphics.Bitmap.createScaledBitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -73,7 +73,7 @@ class ResultActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        uploadImage(saveBitmapToJPG(createScaledBitmap(imageBitmap, 500, 500, true)))
+        uploadImage(saveBitmapToJPG(resize(imageBitmap)))
     }
 
     fun onRadioButtonClicked(view: View) {
@@ -135,6 +135,21 @@ class ResultActivity : AppCompatActivity() {
         return f
     }
 
+
+    private fun resize(bitmap: Bitmap): Bitmap {
+        val maxHeight = 1024
+        val maxWidth = 1024
+        val scale = Math.min(
+            maxHeight.toFloat() / bitmap.width,
+            maxWidth.toFloat() / bitmap.height
+        )
+
+        val matrix = Matrix()
+        matrix.postScale(scale, scale)
+
+        val resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        return resizedBitmap
+    }
 
     // Writes the result in the form :
     // CLOUD TYPE
