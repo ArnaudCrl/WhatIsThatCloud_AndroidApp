@@ -9,13 +9,9 @@
         android:topLeftRadius="30dp"
         android:topRightRadius="30dp" />
 
-    <solid android:color="#ffa41b" />
+    <solid android:color="@color/colorButtonActivated" />
 
-    <padding
-        android:bottom="0dp"
-        android:left="0dp"
-        android:right="0dp"
-        android:top="0dp" />
+    <stroke android:width="1dip" android:color="@color/colorButtonOutlineDark"/> `<!--Border-->`
 
     <size
         android:height="60dp"

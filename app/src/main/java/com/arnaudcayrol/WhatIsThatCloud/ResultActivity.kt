@@ -1,17 +1,18 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createScaledBitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.text.Spannable
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.TextView.BufferType
@@ -19,12 +20,9 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.SnapHelper
 import com.arnaudcayrol.WhatIsThatCloud.network.API_obj
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
 import com.arnaudcayrol.WhatIsThatCloud.utils.ColorUtils
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_result.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,9 +39,9 @@ import java.io.FileOutputStream
 class ResultActivity : AppCompatActivity() {
 
     lateinit var imageBitmap: Bitmap
-    val recycler_view_clouds: ArrayList<Bitmap> = ArrayList()
-    var feedbackChoice: String = "don't know"
-
+    private val recycler_view_clouds: ArrayList<Bitmap> = ArrayList()
+    private var feedbackChoice: String = "don't know"
+    private var userHasClicked : Boolean = false
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +60,21 @@ class ResultActivity : AppCompatActivity() {
             setRecyclerList(cloudList.resultList[0].first)
         }
 
+        feedback_choice.visibility = View.GONE
+
+
+        btn_giveFeedback.setOnClickListener{
+            if (!userHasClicked){
+                userHasClicked = true
+                feedback_choice.visibility = View.VISIBLE
+//                btn_giveFeedback.setBackgroundResource(R.drawable.toggle_on_btn)
+            } else if (userHasClicked){
+                userHasClicked = false
+                feedback_choice.visibility = View.GONE
+//                btn_giveFeedback.setBackgroundResource(R.drawable.toggle_off_btn)
+
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -90,6 +103,12 @@ class ResultActivity : AppCompatActivity() {
                     }
             }
         }
+
+        Handler().postDelayed({
+            feedback_choice.visibility = View.GONE
+            btn_giveFeedback.visibility = View.GONE
+            Toast.makeText(this, "Thank you for your feedback", Toast.LENGTH_LONG).show()
+        }, 1000)
     }
 
 
@@ -133,6 +152,14 @@ class ResultActivity : AppCompatActivity() {
         span.setSpan(ForegroundColorSpan(ColorUtils.getColor(pair.second.toFloat())), pair.first.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         span.setSpan(AbsoluteSizeSpan(20, true), pair.first.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
     }
+
+
+
+
+
+
+
+
 
 
     private fun setRecyclerList(best : String){

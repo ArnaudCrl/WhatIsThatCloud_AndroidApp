@@ -5,8 +5,7 @@
     android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
-    android:background="#FFFDE6"
+    android:background="@color/colorBackgroundDark"
     tools:context=".ResultActivity">
 
 
@@ -15,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/cardview_dark_background"
         android:orientation="horizontal" />
 
     <TextView
@@ -23,55 +21,99 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/recyclerViewClouds"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="15dp"
         android:layout_marginBottom="15dp"
-        android:fontFamily="sans-serif"
+        android:fontFamily="@font/montserrat"
         android:text="Stratocumulus\n90% certainty"
         android:textAlignment="textStart"
+        android:textColor="@color/colorTextLight"
         android:textSize="30sp"
         android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/picUserPicture"
-        android:layout_width="wrap_content"
-        android:layout_height="238dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/result1"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="15dp"
+        android:padding="15dp"
+        android:background="@color/colorBackgroundLight"
         app:srcCompat="@drawable/cumulus_1" />
 
 
     <RadioGroup
         android:id="@+id/feedback_choice"
-        android:layout_width="wrap_content"
+        android:layout_width="385dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
-        android:checkedButton="@id/choice_dont_know"
-        android:orientation="horizontal">
+        android:layout_marginBottom="5dp"
+        android:alwaysDrawnWithCache="false"
+        android:background="@drawable/oval_orange_button"
+        android:elevation="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
         <RadioButton
             android:id="@+id/choice_correct"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:fontFamily="@font/montserrat"
             android:onClick="onRadioButtonClicked"
-            android:text="Correct" />
+            android:text="CORRECT"
+            android:textAlignment="center" />
 
         <RadioButton
             android:id="@+id/choice_dont_know"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+
             android:onClick="onRadioButtonClicked"
-            android:text="I don't know" />
+            android:text="I DON'T KNOW"
+            android:textAlignment="center" />
 
         <RadioButton
             android:id="@+id/choice_incorrect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:fontFamily="@font/montserrat"
             android:onClick="onRadioButtonClicked"
-            android:text="Incorrect" />
+            android:text="INCORRECT"
+            android:textAlignment="center" />
 
     </RadioGroup>
+
+    <ToggleButton
+        android:id="@+id/btn_giveFeedback"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/recyclerViewClouds"
+        android:layout_below="@+id/picUserPicture"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="25dp"
+        android:layout_toEndOf="@+id/result1"
+        android:background="@drawable/toggle_selector"
+        android:fontFamily="@font/montserrat"
+        android:text="IS IT CORRECT ?"
+        android:textAlignment="center"
+        android:textColor="@color/colorTextDark"
+        android:textOff="IS IT CORRECT ?"
+        android:textOn="CANCEL"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        tools:text="IS IT CORRECT ?" />
+
+
 
 
 </RelativeLayout>

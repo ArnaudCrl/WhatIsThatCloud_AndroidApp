@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#404b69"
+    android:background="@color/colorBackgroundDark"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="65dp"
             android:layout_weight="0.5"
-            android:background="@drawable/button_border"
+            android:background="@drawable/square_blue_button"
             android:fontFamily="@font/montserrat"
             android:text="TAKE PICTURE" />
 
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="65dp"
             android:layout_weight="0.5"
-            android:background="@drawable/button_border"
+            android:background="@drawable/square_blue_button"
             android:fontFamily="@font/montserrat"
             android:text="OPEN GALERY" />
     </LinearLayout>
@@ -58,7 +58,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="25dp"
-        android:background="@drawable/oval_button"
+        android:background="@drawable/oval_orange_button"
         android:fontFamily="@font/montserrat"
         android:text="WHAT IS IT ?"
         android:textAlignment="center"
@@ -70,7 +70,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btnDisplayResult"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="10dp"
         android:isScrollContainer="true"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight" />
+
 </RelativeLayout>
