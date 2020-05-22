@@ -89,7 +89,7 @@ object BitmapManipulation {
     }
 
 
-    fun resize(bitmap: Bitmap): Bitmap {
+    fun resizeTo1024px(bitmap: Bitmap): Bitmap {
         val maxHeight = 1024
         val maxWidth = 1024
         val scale = Math.min(

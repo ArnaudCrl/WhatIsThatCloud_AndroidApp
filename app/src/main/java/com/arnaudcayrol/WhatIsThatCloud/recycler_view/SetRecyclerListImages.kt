@@ -31,6 +31,10 @@ object SetupRecyclerList {
         recyclerview.adapter = RecyclerViewAdapter(recycler_view_clouds, context)
     }
 
+    public fun resetRecyclerView(){
+        recycler_view_clouds.clear()
+    }
+
     private fun addAltocumulus(context: Context){
         recycler_view_clouds.add(BitmapFactory.decodeResource(context.resources, R.drawable.altocumulus_1))
         recycler_view_clouds.add(BitmapFactory.decodeResource(context.resources, R.drawable.altocumulus_2))

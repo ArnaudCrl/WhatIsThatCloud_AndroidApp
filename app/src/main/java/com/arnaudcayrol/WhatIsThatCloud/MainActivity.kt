@@ -5,8 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.arnaudcayrol.WhatIsThatCloud.network.API_obj
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
@@ -17,9 +19,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.*
+import retrofit2.Call
 import java.io.File
 
 
@@ -37,6 +38,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 //        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
+        CoroutineScope(Job() + Dispatchers.Main ).launch {
+            try {
+                API_obj.retrofitService.wakeupServer().await()
+            }
+            catch (e: Exception) {
+                // This wakes up the server to gain time, so it is supposed to throw an exception
+            }
+        }
+
         btnTakePic.setOnClickListener{
             takePicture()
         }
@@ -50,13 +60,23 @@ class MainActivity : AppCompatActivity() {
                 uploadImage()
                 btnDisplayResult?.isEnabled = false
                 btnDisplayResult.setBackgroundResource(R.drawable.oval_grey_button)
+                btnDisplayResult.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorTextGrey))
+
 
             } else {
                 Toast.makeText(this, "No file to upload", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
-
+    override fun onResume() {
+        super.onResume()
+        if (::photoFile.isInitialized) {
+            btnDisplayResult.setBackgroundResource(R.drawable.oval_orange_button)
+            btnDisplayResult.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorTextDark))
+            btnDisplayResult?.isEnabled = true
+            txtUserNotification.text = ""
+        }
     }
 
 
@@ -83,19 +103,12 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Failure: ${e.message}", Toast.LENGTH_LONG).show()
                 println("Failure: ${e.message}")
                 btnDisplayResult.setBackgroundResource(R.drawable.oval_orange_button)
+                btnDisplayResult.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorTextDark))
+
                 btnDisplayResult?.isEnabled = true
                 txtUserNotification.text = ""
             }
         }
-    }
-
-
-
-    override fun onResume() {
-        super.onResume()
-        btnDisplayResult.setBackgroundResource(R.drawable.oval_orange_button)
-        btnDisplayResult?.isEnabled = true
-        txtUserNotification.text = ""
     }
 
 
@@ -135,10 +148,16 @@ class MainActivity : AppCompatActivity() {
 
         else super.onActivityResult(requestCode, resultCode, data)
 
+        btnDisplayResult.setBackgroundResource(R.drawable.oval_orange_button)
+        btnDisplayResult.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorTextDark))
+
         imageView.setImageURI(uri)
+        img_BakgroundSketch.visibility = View.GONE
         if (uri != null) photoFile224 = BitmapManipulation.resizeTo224(this, uri)
     }
 }
+
+
 
 
 

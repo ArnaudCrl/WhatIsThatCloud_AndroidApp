@@ -27,16 +27,18 @@ class CloudList  (
         "Stratocumulus" to stratocumulus,
         "Stratus" to stratus
     ).sortedByDescending{it.second}
-//
-//
-//    fun getBest(): String {
-//        return "The most plausible result is ${result_list[0].first} with ${(result_list[0].second * 100).toInt()}% probability"
-//    }
-//
-//    fun getBests(): String {
-//        return "RESULT :\n" +
-//                "${result_list[0].first} with ${(result_list[0].second * 100).toInt()}% confidence\n" +
-//                "${result_list[1].first} with ${(result_list[1].second * 100).toInt()}% confidence\n" +
-//                "${result_list[2].first} with ${(result_list[2].second * 100).toInt()}% confidence"
-//    }
+
+    val urlList= mapOf(
+        "Altocumulus" to "https://en.wikipedia.org/wiki/Altocumulus_cloud",
+        "Altostratus" to "https://en.wikipedia.org/wiki/Altostratus_cloud",
+        "Cirrocumulus" to "https://en.wikipedia.org/wiki/Cirrocumulus_cloud",
+        "Cirrostratus" to "https://en.wikipedia.org/wiki/Cirrostratus_cloud",
+        "Cirrus" to "https://en.wikipedia.org/wiki/Cirrus_cloud",
+        "Cumulonimbus" to "https://en.wikipedia.org/wiki/Cumulonimbus_cloud",
+        "Cumulus" to "https://en.wikipedia.org/wiki/Cumulus_cloud",
+        "Nimbostratus" to "https://en.wikipedia.org/wiki/Nimbostratus_cloud",
+        "Stratocumulus" to "https://en.wikipedia.org/wiki/Stratocumulus_cloud",
+        "Stratus" to "https://en.wikipedia.org/wiki/Stratus_cloud"
+    )
+
 }

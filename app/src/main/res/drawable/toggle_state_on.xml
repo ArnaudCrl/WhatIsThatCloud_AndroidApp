@@ -4,7 +4,7 @@
         <shape android:shape="rectangle">
             <!-- Draw a 5dp width border around shape -->
             <stroke
-                android:color="@color/colorButtonOutlineBright"
+                android:color="@color/colorButtonToggleOn"
                 android:width="5dp"
                 />
             <corners

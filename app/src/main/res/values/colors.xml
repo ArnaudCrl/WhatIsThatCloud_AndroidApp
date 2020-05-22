@@ -4,18 +4,41 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="colorBackgroundDark">#404b69</color>
-    <color name="colorBackgroundLight">#827397</color>
+    <color name="colorBackgroundDark">#606060</color>
+    <color name="colorBackgroundLight">#FFFFFF</color>
 
-    <color name="colorButtonLight">#d8b9c3</color>
-    <color name="colorButtonBright">#f3c623</color>
-    <color name="colorButtonDark">#283149</color>
+    <color name="colorButtonLight">#AAAAAA</color>
+    <color name="colorButtonBright">#FFB85F</color>
+    <color name="colorButtonDark">#373737</color>
     <color name="colorButtonOutlineDark">#000000</color>
-    <color name="colorButtonOutlineBright">#00a8cc</color>
+    <color name="colorButtonOutlineBright">#FFE80D</color>
     <color name="colorButtonActivated">#aaaaaa</color>
+    <color name="colorButtonToggleOn">#00a8cc</color>
+    <color name="colorButtonToggleOff">#252525</color>
 
-    <color name="colorTextLight">#E1E1E1</color>
+    <color name="colorTextLight">#FFFFFF</color>
+    <color name="colorTextGrey">#7E7E7E</color>
     <color name="colorTextDark">#000000</color>
+
+
+<!--PURPLE THEME-->
+    <!--    <color name="colorPrimary">#008577</color>-->
+    <!--    <color name="colorPrimaryDark">#00574B</color>-->
+    <!--    <color name="colorAccent">#D81B60</color>-->
+
+    <!--    <color name="colorBackgroundDark">#404b69</color>-->
+    <!--    <color name="colorBackgroundLight">#827397</color>-->
+
+    <!--    <color name="colorButtonLight">#d8b9c3</color>-->
+    <!--    <color name="colorButtonBright">#f3c623</color>-->
+    <!--    <color name="colorButtonDark">#283149</color>-->
+    <!--    <color name="colorButtonOutlineDark">#000000</color>-->
+    <!--    <color name="colorButtonOutlineBright">#00a8cc</color>-->
+    <!--    <color name="colorButtonActivated">#aaaaaa</color>-->
+
+    <!--    <color name="colorTextLight">#E1E1E1</color>-->
+    <!--    <color name="colorTextDark">#000000</color>-->
+
 
 
 </resources>

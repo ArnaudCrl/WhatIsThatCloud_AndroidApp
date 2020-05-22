@@ -43,26 +43,25 @@
         android:layout_height="400dp"
         android:layout_above="@+id/txtUserNotification"
         android:layout_below="@+id/LinearLayoutCameraGalery"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:layout_marginBottom="10dp"
-        android:contentDescription="@string/picturedisplay"
-        app:srcCompat="@drawable/cloud_sketch" />
+        android:contentDescription="@string/picturedisplay" />
 
 
     <Button
         android:id="@+id/btnDisplayResult"
         style="@android:style/Widget.Button"
-        android:layout_width="200dp"
-
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="25dp"
-        android:background="@drawable/oval_orange_button"
+        android:background="@drawable/oval_grey_button"
         android:fontFamily="@font/montserrat"
         android:text="WHAT IS IT ?"
         android:textAlignment="center"
-        android:textSize="15sp"
+        android:textColor="@color/colorTextGrey"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
@@ -74,5 +73,15 @@
         android:isScrollContainer="true"
         android:textAlignment="center"
         android:textColor="@color/colorTextLight" />
+
+    <ImageView
+        android:id="@+id/img_BakgroundSketch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_above="@id/btnDisplayResult"
+        android:layout_below="@id/LinearLayoutCameraGalery"
+        android:cropToPadding="false"
+        app:srcCompat="@drawable/background_sketch_small" />
 
 </RelativeLayout>
