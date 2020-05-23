@@ -30,11 +30,12 @@ import java.io.File
 
 class ResultActivity : AppCompatActivity() {
 
-    lateinit var imageBitmap: Bitmap
-    lateinit var cloudList: CloudList
-    var pageNumber : Int = 0
+    private lateinit var imageBitmap: Bitmap
+    private lateinit var cloudList: CloudList
+    private var pageNumber : Int = 0
+    private lateinit var urlList : Map<String, String>
 
-    @RequiresApi(Build.VERSION_CODES.M)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
@@ -48,10 +49,23 @@ class ResultActivity : AppCompatActivity() {
 
         btn_left_arrow.isEnabled = false
         btn_left_arrow.setImageResource(R.drawable.left_arrow_off)
-        ColorUtils.writeColoredResultText(txt_result, cloudList.resultList[0])
+        ColorUtils.writeColoredResultText(this, txt_result, cloudList.resultList[0])
         SetupRecyclerList.setRecyclerList(this, recyclerViewClouds, cloudList.resultList[0].first)
 
         val alert = SetupConfirmationDialog()
+
+        urlList= mapOf(
+            "Altocumulus" to getString(R.string.wikiAltocumulus),
+            "Altostratus" to getString(R.string.wikiAltostratus),
+            "Cirrocumulus" to getString(R.string.wikiCirrocumulus),
+            "Cirrostratus" to getString(R.string.wikiCirrostratus),
+            "Cirrus" to getString(R.string.wikiCirrus),
+            "Cumulonimbus" to getString(R.string.wikiCumulonimbus),
+            "Cumulus" to getString(R.string.wikiCumulus),
+            "Nimbostratus" to getString(R.string.wikiNimbostratus),
+            "Stratocumulus" to getString(R.string.wikiStratocumulus),
+            "Stratus" to getString(R.string.wikiStratus)
+        )
 
         btn_left_arrow.setOnClickListener {
             GoToPreviousPrediction()
@@ -63,27 +77,27 @@ class ResultActivity : AppCompatActivity() {
             alert.show()
         }
         btn_wikiRedirect.setOnClickListener {
-            GoToURL(cloudList.urlList[cloudList.resultList[pageNumber].first])
+            GoToURL(urlList[cloudList.resultList[pageNumber].first])
         }
     }
 
     private fun SetupConfirmationDialog(): AlertDialog{
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle("Confirm")
-        builder.setMessage("Is this result correct?")
+        builder.setTitle(getString(R.string.Confirm))
+        builder.setMessage(getString(R.string.IsThisResultCorrect))
 
-        builder.setPositiveButton("YES"
+        builder.setPositiveButton(getString(R.string.Yes)
         ) { dialog, _ ->
             btn_validationfeedback.isEnabled = false
             btn_validationfeedback.setImageResource(R.drawable.validation_icon_clicked)
             Handler().postDelayed({
-                Toast.makeText(this, "Thank you for your feedback", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.ThankYouForYourFeedback), Toast.LENGTH_LONG).show()
             }, 1000)
             uploadImage(BitmapManipulation.saveBitmapToJPG(this, BitmapManipulation.resizeTo1024px(imageBitmap)))
             dialog.dismiss()
         }
 
-        builder.setNegativeButton("NO"
+        builder.setNegativeButton(getString(R.string.No)
         ) { dialog, _ -> // Do nothing
             dialog.dismiss()
         }
@@ -103,7 +117,7 @@ class ResultActivity : AppCompatActivity() {
         }
         pageNumber++
         SetupRecyclerList.resetRecyclerView()
-        ColorUtils.writeColoredResultText(txt_result, cloudList.resultList[pageNumber])
+        ColorUtils.writeColoredResultText(this, txt_result, cloudList.resultList[pageNumber])
         SetupRecyclerList.setRecyclerList(this, recyclerViewClouds, cloudList.resultList[pageNumber].first)
     }
 
@@ -118,7 +132,7 @@ class ResultActivity : AppCompatActivity() {
         }
         pageNumber--
         SetupRecyclerList.resetRecyclerView()
-        ColorUtils.writeColoredResultText(txt_result, cloudList.resultList[pageNumber])
+        ColorUtils.writeColoredResultText(this, txt_result, cloudList.resultList[pageNumber])
         SetupRecyclerList.setRecyclerList(this, recyclerViewClouds, cloudList.resultList[pageNumber].first)
     }
 

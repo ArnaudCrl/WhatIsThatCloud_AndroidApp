@@ -20,7 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import okhttp3.*
-import retrofit2.Call
 import java.io.File
 
 
@@ -36,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
         CoroutineScope(Job() + Dispatchers.Main ).launch {
             try {
@@ -64,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
 
             } else {
-                Toast.makeText(this, "No file to upload", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.NoFileToUpload), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -81,12 +79,13 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun uploadImage() {
-        txtUserNotification.text = "Awaiting server Response ..."
+        txtUserNotification.text = getString(R.string.AwaitingServerResponse)
         CoroutineScope(Job() + Dispatchers.Main ).launch {
 
             // Creating the request to the web server, sending a 224x224 px image
             val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile224)
-            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", photoFile224?.name, fileReqBody)
+            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file",
+                photoFile224.name, fileReqBody)
             val getPropertiesDeferred = API_obj.retrofitService.uploadFileAsync(part)
 
             try {
@@ -100,8 +99,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
 
             } catch (e: Exception) {
-                Toast.makeText(applicationContext, "Failure: ${e.message}", Toast.LENGTH_LONG).show()
-                println("Failure: ${e.message}")
+                Toast.makeText(applicationContext, "Failure: ${e.message}.\n" + getString(R.string.bePatient), Toast.LENGTH_LONG).show()
                 btnDisplayResult.setBackgroundResource(R.drawable.oval_orange_button)
                 btnDisplayResult.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorTextDark))
 
@@ -122,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         if (takePictureIntent.resolveActivity(this.packageManager) != null) {
             startActivityForResult(takePictureIntent, REQUEST_CODE_TAKE_PICTURE)
         } else {
-            Toast.makeText(this, "unable to open camera", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.UnableToOpenCamera), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -130,7 +128,7 @@ class MainActivity : AppCompatActivity() {
         val openGaleryIntent = Intent()
         openGaleryIntent.type = "image/*"
         openGaleryIntent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(openGaleryIntent, "Select image"), REQUEST_CODE_SELECT_PICTURE)
+        startActivityForResult(Intent.createChooser(openGaleryIntent, getString(R.string.SelectImage)), REQUEST_CODE_SELECT_PICTURE)
     }
 
 

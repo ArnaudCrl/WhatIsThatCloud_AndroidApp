@@ -1,6 +1,27 @@
 <resources>
     <string name="app_name">What Is That Cloud ?</string>
-    <string name="prendre_photo">Prendre Photo</string>
-    <string name="picturedisplay">PictureDisplay</string>
-    <string name="open_galery">Open galery</string>
+    <string name="AwaitingServerResponse">Awaiting server Response …</string>
+    <string name="UnableToOpenCamera">Unable to open camera</string>
+    <string name="SelectImage">Select image</string>
+    <string name="NoFileToUpload">No file to upload</string>
+    <string name="Confirm">Confirm</string>
+    <string name="IsThisResultCorrect">Is this result correct?</string>
+    <string name="Yes">YES</string>
+    <string name="ThankYouForYourFeedback">Thank you for your feedback</string>
+    <string name="No">NO</string>
+    <string name="take_picture">TAKE PICTURE</string>
+    <string name="OpenGalery">OPEN GALERY</string>
+    <string name="what_is_it">IDENTIFCATION</string>
+    <string name="confidence">confidence</string>
+    <string name="wikiAltocumulus">https://en.wikipedia.org/wiki/Altocumulus_cloud</string>
+    <string name="wikiAltostratus">https://en.wikipedia.org/wiki/Altostratus_cloud</string>
+    <string name="wikiCirrocumulus">https://en.wikipedia.org/wiki/Cirrocumulus_cloud</string>
+    <string name="wikiCirrostratus">https://en.wikipedia.org/wiki/Cirrostratus_cloud</string>
+    <string name="wikiCirrus">https://en.wikipedia.org/wiki/Cirrus_cloud</string>
+    <string name="wikiCumulonimbus">https://en.wikipedia.org/wiki/Cumulonimbus_cloud</string>
+    <string name="wikiCumulus">https://en.wikipedia.org/wiki/Cumulus_cloud</string>
+    <string name="wikiNimbostratus">https://en.wikipedia.org/wiki/Nimbostratus_cloud</string>
+    <string name="wikiStratocumulus">https://en.wikipedia.org/wiki/Stratocumulus_cloud</string>
+    <string name="wikiStratus">https://en.wikipedia.org/wiki/Stratus_cloud</string>
+    <string name="bePatient">Server is waking up, this takes about 30 seconds.</string>
 </resources>

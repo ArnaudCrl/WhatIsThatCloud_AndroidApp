@@ -1,5 +1,6 @@
 package com.arnaudcayrol.WhatIsThatCloud.network
 
+import com.arnaudcayrol.WhatIsThatCloud.R
 import java.io.Serializable
 
 class CloudList  (
@@ -27,18 +28,5 @@ class CloudList  (
         "Stratocumulus" to stratocumulus,
         "Stratus" to stratus
     ).sortedByDescending{it.second}
-
-    val urlList= mapOf(
-        "Altocumulus" to "https://en.wikipedia.org/wiki/Altocumulus_cloud",
-        "Altostratus" to "https://en.wikipedia.org/wiki/Altostratus_cloud",
-        "Cirrocumulus" to "https://en.wikipedia.org/wiki/Cirrocumulus_cloud",
-        "Cirrostratus" to "https://en.wikipedia.org/wiki/Cirrostratus_cloud",
-        "Cirrus" to "https://en.wikipedia.org/wiki/Cirrus_cloud",
-        "Cumulonimbus" to "https://en.wikipedia.org/wiki/Cumulonimbus_cloud",
-        "Cumulus" to "https://en.wikipedia.org/wiki/Cumulus_cloud",
-        "Nimbostratus" to "https://en.wikipedia.org/wiki/Nimbostratus_cloud",
-        "Stratocumulus" to "https://en.wikipedia.org/wiki/Stratocumulus_cloud",
-        "Stratus" to "https://en.wikipedia.org/wiki/Stratus_cloud"
-    )
 
 }

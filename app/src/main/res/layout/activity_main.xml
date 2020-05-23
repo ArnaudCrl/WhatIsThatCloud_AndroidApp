@@ -19,22 +19,22 @@
         <Button
             android:id="@+id/btnTakePic"
             style="@android:style/Widget.Holo.Button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="65dp"
             android:layout_weight="0.5"
             android:background="@drawable/square_blue_button"
             android:fontFamily="@font/montserrat"
-            android:text="TAKE PICTURE" />
+            android:text="@string/take_picture" />
 
         <Button
             android:id="@+id/btnOpenGalery"
             style="@android:style/Widget.Holo.Button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="65dp"
             android:layout_weight="0.5"
             android:background="@drawable/square_blue_button"
             android:fontFamily="@font/montserrat"
-            android:text="OPEN GALERY" />
+            android:text="@string/OpenGalery" />
     </LinearLayout>
 
     <ImageView
@@ -44,8 +44,7 @@
         android:layout_above="@+id/txtUserNotification"
         android:layout_below="@+id/LinearLayoutCameraGalery"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="10dp"
-        android:contentDescription="@string/picturedisplay" />
+        android:layout_marginBottom="10dp" />
 
 
     <Button
@@ -55,10 +54,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="35dp"
         android:background="@drawable/oval_grey_button"
         android:fontFamily="@font/montserrat"
-        android:text="WHAT IS IT ?"
+        android:text="@string/what_is_it"
         android:textAlignment="center"
         android:textColor="@color/colorTextGrey"
         android:textSize="16sp"
@@ -83,5 +82,21 @@
         android:layout_below="@id/LinearLayoutCameraGalery"
         android:cropToPadding="false"
         app:srcCompat="@drawable/background_sketch_small" />
+
+    <TextView
+        android:id="@+id/Signature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/montserrat"
+        android:text="Arnaud Cayrol"
+        android:textColor="#AEAEAE"
+        android:textSize="9sp"
+        android:textStyle="italic" />
 
 </RelativeLayout>

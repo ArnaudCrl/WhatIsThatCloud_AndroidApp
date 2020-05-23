@@ -1,10 +1,13 @@
 package com.arnaudcayrol.WhatIsThatCloud.utils
 
+import android.content.Context
 import android.graphics.Color
 import android.text.Spannable
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.widget.TextView
+import com.arnaudcayrol.WhatIsThatCloud.R
 import kotlin.math.roundToInt
 
 object ColorUtils {
@@ -39,10 +42,12 @@ object ColorUtils {
     // Writes the result in the form :
     // CLOUD TYPE
     // XX% confidence -> colored text based on percentage
-    fun writeColoredResultText(textView: TextView, pair: Pair<String, Double>){
-        textView.setText("${pair.first}\n" + "${(pair.second * 100).toInt()}% confidence", TextView.BufferType.SPANNABLE)
+    fun writeColoredResultText(context : Context, textView: TextView, pair: Pair<String, Double>){
+        var confidence = context.getString(R.string.confidence)
+        textView.setText("${pair.first}\n" + "${(pair.second * 100).toInt()}% " + confidence, TextView.BufferType.SPANNABLE)
         val span = textView.text as Spannable
         span.setSpan(ForegroundColorSpan(getColor(pair.second.toFloat())), pair.first.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        span.setSpan(AbsoluteSizeSpan(20, true), pair.first.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        span.setSpan(RelativeSizeSpan(0.7f), pair.first.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
     }
 }
