@@ -24,5 +24,5 @@
     <string name="wikiNimbostratus">https://fr.wikipedia.org/wiki/Nimbostratus</string>
     <string name="wikiStratocumulus">https://fr.wikipedia.org/wiki/Stratocumulus</string>
     <string name="wikiStratus">https://fr.wikipedia.org/wiki/Stratus</string>
-    <string name="bePatient">Le serveur redémarre, cela prendra environ 30 secondes.</string>
+    <string name="bePatient">Le serveur redémarre, cela prendra environ 30 secondes la premère fois</string>
 </resources>

@@ -23,5 +23,5 @@
     <string name="wikiNimbostratus">https://en.wikipedia.org/wiki/Nimbostratus_cloud</string>
     <string name="wikiStratocumulus">https://en.wikipedia.org/wiki/Stratocumulus_cloud</string>
     <string name="wikiStratus">https://en.wikipedia.org/wiki/Stratus_cloud</string>
-    <string name="bePatient">Server is waking up, this takes about 30 seconds.</string>
+    <string name="bePatient">Server is waking up, this takes about 30 seconds the first time</string>
 </resources>
