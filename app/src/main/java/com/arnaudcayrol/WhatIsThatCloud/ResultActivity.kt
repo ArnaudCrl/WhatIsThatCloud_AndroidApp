@@ -34,6 +34,7 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var cloudList: CloudList
     private var pageNumber : Int = 0
     private lateinit var urlList : Map<String, String>
+    private var feedbackSent : Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,7 +94,8 @@ class ResultActivity : AppCompatActivity() {
             Handler().postDelayed({
                 Toast.makeText(this, getString(R.string.ThankYouForYourFeedback), Toast.LENGTH_LONG).show()
             }, 1000)
-            uploadImage(BitmapManipulation.saveBitmapToJPG(this, BitmapManipulation.resizeTo1024px(imageBitmap)))
+            uploadImage(BitmapManipulation.saveBitmapToJPG(this, BitmapManipulation.resizeTo1024px(imageBitmap)), cloudList.resultList[pageNumber].first)
+            feedbackSent = true
             dialog.dismiss()
         }
 
@@ -139,15 +141,18 @@ class ResultActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         SetupRecyclerList.resetRecyclerView()
+        if (!feedbackSent) {
+            uploadImage(BitmapManipulation.saveBitmapToJPG(this, BitmapManipulation.resizeTo1024px(imageBitmap)), "NO_FEEDBACK")
+        }
     }
 
 
-    private fun uploadImage(photoFile224: File) {
+    private fun uploadImage(photoFile224: File, name: String) {
         CoroutineScope(Job() + Dispatchers.Main ).launch {
 
             // Creating the request to the web server, sending a 224x224 px image
             val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile224)
-            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", cloudList.resultList[pageNumber].first, fileReqBody)
+            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", name, fileReqBody)
             val getResultDeffered = API_obj.retrofitService.uploadFeedbackAsync(part)
             try {
                 println("Success: ${getResultDeffered.await().Result}")
@@ -163,8 +168,6 @@ class ResultActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
     }
-
-
 
 }
 

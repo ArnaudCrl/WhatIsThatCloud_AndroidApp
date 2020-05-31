@@ -19,7 +19,7 @@
         <Button
             android:id="@+id/btnTakePic"
             style="@android:style/Widget.Holo.Button"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="65dp"
             android:layout_weight="0.5"
             android:background="@drawable/square_blue_button"
@@ -29,7 +29,7 @@
         <Button
             android:id="@+id/btnOpenGalery"
             style="@android:style/Widget.Holo.Button"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="65dp"
             android:layout_weight="0.5"
             android:background="@drawable/square_blue_button"
