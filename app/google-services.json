@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "500213373359",
+    "firebase_url": "https://whatisthatcloud-3565c.firebaseio.com",
+    "project_id": "whatisthatcloud-3565c",
+    "storage_bucket": "whatisthatcloud-3565c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500213373359:android:96791130082bec001ff75a",
+        "android_client_info": {
+          "package_name": "com.arnaudcayrol.WhatIsThatCloud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "500213373359-fh1f0q142bbocgb80tnaavmson2m0u32.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0T-q3DRc0O2G0UOSUbYBPnNCPnGptbcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500213373359-fh1f0q142bbocgb80tnaavmson2m0u32.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

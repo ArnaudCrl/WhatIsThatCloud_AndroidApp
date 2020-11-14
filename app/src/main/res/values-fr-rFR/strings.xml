@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Quel Est Ce Nuage ?</string>
     <string name="confidence">de certitude</string>
-    <string name="what_is_it">IDENTIFCATION</string>
+    <string name="what_is_it">IDENTIFICATION</string>
     <string name="OpenGalery">OUVRIR LA GALERIE</string>
     <string name="take_picture">PRENDRE UNE PHOTO</string>
     <string name="No">NON</string>

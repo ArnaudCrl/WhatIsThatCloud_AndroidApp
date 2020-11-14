@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_green_light">
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_sign_in_button"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="@+id/facebook_login_button_login"
+        app:layout_constraintStart_toStartOf="@+id/facebook_login_button_login"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/facebook_login_button_login"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/google_sign_in_button" />
+
+
+    <Button
+        android:id="@+id/anonymous_login_button"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:text="Continue whithout loging in"
+        app:layout_constraintEnd_toEndOf="@+id/facebook_login_button_login"
+        app:layout_constraintStart_toStartOf="@+id/facebook_login_button_login"
+        app:layout_constraintTop_toBottomOf="@+id/facebook_login_button_login" />
+
+
+
+
+    <!--    <Button-->
+<!--        android:id="@+id/login_button_login"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:text="Login"-->
+<!--        android:background="@drawable/rounded_button"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/password_edittext_login"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/password_edittext_login"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/password_edittext_login" />-->
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

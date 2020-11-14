@@ -11,7 +11,7 @@
     <string name="No">NO</string>
     <string name="take_picture">TAKE PICTURE</string>
     <string name="OpenGalery">OPEN GALERY</string>
-    <string name="what_is_it">IDENTIFCATION</string>
+    <string name="what_is_it">IDENTIFICATION</string>
     <string name="confidence">confidence</string>
     <string name="wikiAltocumulus">https://en.wikipedia.org/wiki/Altocumulus_cloud</string>
     <string name="wikiAltostratus">https://en.wikipedia.org/wiki/Altostratus_cloud</string>
@@ -24,4 +24,7 @@
     <string name="wikiStratocumulus">https://en.wikipedia.org/wiki/Stratocumulus_cloud</string>
     <string name="wikiStratus">https://en.wikipedia.org/wiki/Stratus_cloud</string>
     <string name="bePatient">Server is waking up, this takes about 30 seconds the first time</string>
+    <string name="facebook_app_id">834475974015022</string>
+    <string name="fb_login_protocol_scheme">fb834475974015022</string>
+
 </resources>

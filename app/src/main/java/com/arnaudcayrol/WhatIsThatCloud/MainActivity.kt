@@ -14,6 +14,7 @@ import com.arnaudcayrol.WhatIsThatCloud.network.API_obj
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
 import com.arnaudcayrol.WhatIsThatCloud.utils.BitmapManipulation
 import com.arnaudcayrol.WhatIsThatCloud.utils.FileManipluation
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,16 +42,25 @@ class MainActivity : AppCompatActivity() {
                 API_obj.retrofitService.wakeupServer().await()
             }
             catch (e: Exception) {
-                // This wakes up the server to gain time, so it is supposed to throw an exception
+                // This wakes up the server to gain time, so it is supposed to throw an exception if the server is not awake
             }
         }
+        val uid = FirebaseAuth.getInstance().currentUser
 
         btnTakePic.setOnClickListener{
-            takePicture()
+            if (uid != null) {
+                Toast.makeText(this, uid.displayName, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, uid.uid, Toast.LENGTH_SHORT).show()
+
+            }
+//            takePicture()
         }
 
         btnOpenGalery.setOnClickListener{
-            openGalery()
+            FirebaseAuth.getInstance().signOut()
+            Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
+
+//            openGalery()
         }
 
         btnDisplayResult.setOnClickListener{
@@ -132,26 +142,33 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        var uri: Uri? = null
-
-        if (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
-            uri = Uri.fromFile(photoFile)
-        }
-
-        if (requestCode == REQUEST_CODE_SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
-            uri = data?.data!!
-            photoFile = FileManipluation.saveImageToTempFile(this, uri, "tempPhoto.jpg")
-        }
-
-        else super.onActivityResult(requestCode, resultCode, data)
-
+    private fun updateUI(uri : Uri){
         btnDisplayResult.setBackgroundResource(R.drawable.oval_orange_button)
         btnDisplayResult.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorTextDark))
 
         imageView.setImageURI(uri)
         img_BakgroundSketch.visibility = View.GONE
-        if (uri != null) photoFile224 = BitmapManipulation.resizeTo224(this, uri)
+        photoFile224 = BitmapManipulation.resizeTo224(this, uri)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        var uri: Uri? = null
+
+        if (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
+            uri = Uri.fromFile(photoFile)
+            updateUI(uri)
+
+        }
+
+        if (requestCode == REQUEST_CODE_SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
+            uri = data?.data!!
+            photoFile = FileManipluation.saveImageToTempFile(this, uri, "tempPhoto.jpg")
+            updateUI(uri)
+        }
+
+        else super.onActivityResult(requestCode, resultCode, data)
+
+
     }
 }
 
