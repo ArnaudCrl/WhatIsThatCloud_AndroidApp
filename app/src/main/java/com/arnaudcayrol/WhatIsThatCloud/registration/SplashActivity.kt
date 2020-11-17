@@ -1,12 +1,10 @@
 package com.arnaudcayrol.WhatIsThatCloud.registration
 
-import android.R
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.arnaudcayrol.WhatIsThatCloud.MainActivity
+import com.arnaudcayrol.WhatIsThatCloud.NewObservationActivity
 import com.google.firebase.auth.FirebaseAuth
 
 

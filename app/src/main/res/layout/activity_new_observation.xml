@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackgroundDark"
+    android:orientation="vertical"
+    tools:context=".NewObservationActivity">
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutCameraGalery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnTakePic"
+            style="@android:style/Widget.Holo.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="65dp"
+            android:layout_weight="0.5"
+            android:background="@drawable/square_blue_button"
+            android:fontFamily="@font/montserrat"
+            android:text="@string/take_picture" />
+
+        <Button
+            android:id="@+id/btnOpenGalery"
+            style="@android:style/Widget.Holo.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="65dp"
+            android:layout_weight="0.5"
+            android:background="@drawable/square_blue_button"
+            android:fontFamily="@font/montserrat"
+            android:text="@string/OpenGalery" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_above="@+id/txtUserNotification"
+        android:layout_below="@+id/LinearLayoutCameraGalery"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp" />
+
+
+    <Button
+        android:id="@+id/btnDisplayResult"
+        style="@android:style/Widget.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="35dp"
+        android:background="@drawable/oval_grey_button"
+        android:fontFamily="@font/montserrat"
+        android:text="@string/what_is_it"
+        android:textAlignment="center"
+        android:textColor="@color/colorTextGrey"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtUserNotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnDisplayResult"
+        android:layout_marginBottom="10dp"
+        android:isScrollContainer="true"
+        android:textAlignment="center"
+        android:textColor="@color/colorTextLight" />
+
+    <ImageView
+        android:id="@+id/img_BakgroundSketch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_above="@id/btnDisplayResult"
+        android:layout_below="@id/LinearLayoutCameraGalery"
+        android:cropToPadding="false"
+        app:srcCompat="@drawable/background_sketch_small" />
+
+    <TextView
+        android:id="@+id/Signature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="@font/montserrat"
+        android:text="Arnaud Cayrol"
+        android:textColor="#AEAEAE"
+        android:textSize="9sp"
+        android:textStyle="italic" />
+
+</RelativeLayout>

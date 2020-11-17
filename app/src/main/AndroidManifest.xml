@@ -15,20 +15,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-<!--        Activities-->
-        <activity android:name=".registration.SplashActivity" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+
+        <!-- Activities -->
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".ResultActivity" />
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".registration.LoginActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity android:name=".registration.SplashActivity"/>
+        <activity android:name=".NewObservationActivity" >
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+    </activity>
+        <activity android:name=".ResultActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".NewObservationActivity" />
+        </activity>
+        <activity
+            android:name=".registration.LoginActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-
-<!--        Providers-->
+        <!-- Providers -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.arnaudcayrol.WhatIsThatCloud.fileprovider"
@@ -39,23 +49,30 @@
                 android:resource="@xml/fileprovider" />
         </provider>
 
-
-<!--            Facebook Stuff-->
+        <!-- Facebook Stuff -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-        <activity android:name="com.facebook.FacebookActivity" android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation" android:label="@string/app_name" />
-        <activity android:name="com.facebook.CustomTabActivity" android:exported="true">
-            <intent-filter> <action android:name="android.intent.action.VIEW" />
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
-
     </application>
 
 </manifest>

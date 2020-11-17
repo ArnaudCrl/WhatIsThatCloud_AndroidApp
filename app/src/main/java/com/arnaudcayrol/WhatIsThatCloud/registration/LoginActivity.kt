@@ -2,11 +2,10 @@ package com.arnaudcayrol.WhatIsThatCloud.registration
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.arnaudcayrol.WhatIsThatCloud.MainActivity
+import com.arnaudcayrol.WhatIsThatCloud.NewObservationActivity
 import com.arnaudcayrol.WhatIsThatCloud.R
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -70,7 +69,7 @@ class LoginActivity: AppCompatActivity() {
         FirebaseAuth.getInstance().signInAnonymously()
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, NewObservationActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
 
@@ -111,7 +110,7 @@ class LoginActivity: AppCompatActivity() {
         FirebaseAuth.getInstance().signInWithCredential(credential)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, NewObservationActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 }
@@ -133,7 +132,7 @@ class LoginActivity: AppCompatActivity() {
         FirebaseAuth.getInstance().signInWithCredential(credential)
             .addOnCompleteListener(this) {
                 if (it.isSuccessful) {
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, NewObservationActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 }

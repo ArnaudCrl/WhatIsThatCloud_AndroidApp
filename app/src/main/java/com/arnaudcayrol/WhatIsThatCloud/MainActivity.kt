@@ -1,179 +1,131 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.Bundle
-import android.provider.MediaStore
-import android.view.View
-import android.widget.Toast
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import com.arnaudcayrol.WhatIsThatCloud.network.API_obj
-import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
-import com.arnaudcayrol.WhatIsThatCloud.utils.BitmapManipulation
-import com.arnaudcayrol.WhatIsThatCloud.utils.FileManipluation
-import com.google.firebase.auth.FirebaseAuth
+import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
+import android.widget.Toast
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.arnaudcayrol.WhatIsThatCloud.fragments.GlobalGaleryFragment
+import com.arnaudcayrol.WhatIsThatCloud.fragments.MyGaleryFragment
+import com.arnaudcayrol.WhatIsThatCloud.registration.LoginActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Picasso
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import okhttp3.*
-import java.io.File
-
-
-private const val REQUEST_CODE_TAKE_PICTURE = 1
-private const val REQUEST_CODE_SELECT_PICTURE = 2
-private lateinit var photoFile: File
-private lateinit var photoFile224: File
-
+import kotlinx.android.synthetic.main.activity_result.*
+import kotlinx.android.synthetic.main.cloud_list_item.view.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var toggle: ActionBarDrawerToggle // For menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        CoroutineScope(Job() + Dispatchers.Main ).launch {
-            try {
-                API_obj.retrofitService.wakeupServer().await()
+        // Menu
+        toggle = ActionBarDrawerToggle(this, drawer_layout, R.string.open, R.string.close)
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        nav_view.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.item1 -> Toast.makeText(
+                    this, "item1", Toast.LENGTH_SHORT).show()
+                R.id.item2 -> Toast.makeText(
+                    this, "item2", Toast.LENGTH_SHORT).show()
+                R.id.item3 -> Toast.makeText(
+                    this, "item3", Toast.LENGTH_SHORT).show()
+
             }
-            catch (e: Exception) {
-                // This wakes up the server to gain time, so it is supposed to throw an exception if the server is not awake
+            true
+        }
+
+
+        // Tabs
+        val tabAdapter = TabsPagerAdapter(supportFragmentManager, lifecycle, 2)
+        tabs_viewpager.adapter = tabAdapter
+        tabs_viewpager.isUserInputEnabled = true
+
+        TabLayoutMediator(tab_layout, tabs_viewpager) { tab, position ->
+            when (position) {
+                0 -> {
+                    tab.text = "Mes observations"
+                }
+                1 -> {
+                    tab.text = "Communauté"
+                }
             }
-        }
-        val uid = FirebaseAuth.getInstance().currentUser
+            // Change color of the icons
+            tab.icon?.colorFilter = BlendModeColorFilterCompat
+                .createBlendModeColorFilterCompat(
+                    Color.GREEN,
+                    BlendModeCompat.SRC_ATOP
+                )
+        }.attach()
 
-        btnTakePic.setOnClickListener{
-            if (uid != null) {
-                Toast.makeText(this, uid.displayName, Toast.LENGTH_SHORT).show()
-                Toast.makeText(this, uid.uid, Toast.LENGTH_SHORT).show()
-
-            }
-//            takePicture()
-        }
-
-        btnOpenGalery.setOnClickListener{
-            FirebaseAuth.getInstance().signOut()
-            Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
-
-//            openGalery()
-        }
-
-        btnDisplayResult.setOnClickListener{
-            if (::photoFile.isInitialized) {
-                uploadImage()
-                btnDisplayResult?.isEnabled = false
-                btnDisplayResult.setBackgroundResource(R.drawable.oval_grey_button)
-                btnDisplayResult.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorTextGrey))
-
-
-            } else {
-                Toast.makeText(this, getString(R.string.NoFileToUpload), Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (::photoFile.isInitialized) {
-            btnDisplayResult.setBackgroundResource(R.drawable.oval_orange_button)
-            btnDisplayResult.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorTextDark))
-            btnDisplayResult?.isEnabled = true
-            txtUserNotification.text = ""
+        // New observation button
+        new_observation_button.setOnClickListener(){
+            val intent = Intent(this, NewObservationActivity::class.java)
+            startActivity(intent)
         }
     }
 
 
-    private fun uploadImage() {
-        txtUserNotification.text = getString(R.string.AwaitingServerResponse)
-        CoroutineScope(Job() + Dispatchers.Main ).launch {
-
-            // Creating the request to the web server, sending a 224x224 px image
-            val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile224)
-            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file",
-                photoFile224.name, fileReqBody)
-            val getPropertiesDeferred = API_obj.retrofitService.uploadFileAsync(part)
-
-            try {
-                // Await the completion of our Retrofit request
-                val cloudList : CloudList = getPropertiesDeferred.await()
-
-                // Passing the result to ResultActivity
-                val intent = Intent(applicationContext, ResultActivity::class.java)
-                intent.putExtra("CloudList", cloudList)
-                intent.putExtra("UserPicture", photoFile.absolutePath)
-                startActivity(intent)
-
-            } catch (e: Exception) {
-                Toast.makeText(applicationContext, "Failure: ${e.message}.\n" + getString(R.string.bePatient), Toast.LENGTH_LONG).show()
-                btnDisplayResult.setBackgroundResource(R.drawable.oval_orange_button)
-                btnDisplayResult.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorTextDark))
-
-                btnDisplayResult?.isEnabled = true
-                txtUserNotification.text = ""
-            }
-        }
-    }
-
-
-    private fun takePicture() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        photoFile = FileManipluation.getPhotoFile(this, "tempPhoto.jpg")
-
-        val fileProvider = FileProvider.getUriForFile(this, "com.arnaudcayrol.WhatIsThatCloud.fileprovider", photoFile)
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
-
-        if (takePictureIntent.resolveActivity(this.packageManager) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_CODE_TAKE_PICTURE)
-        } else {
-            Toast.makeText(this, getString(R.string.UnableToOpenCamera), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun openGalery() {
-        val openGaleryIntent = Intent()
-        openGaleryIntent.type = "image/*"
-        openGaleryIntent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(openGaleryIntent, getString(R.string.SelectImage)), REQUEST_CODE_SELECT_PICTURE)
-    }
-
-
-    private fun updateUI(uri : Uri){
-        btnDisplayResult.setBackgroundResource(R.drawable.oval_orange_button)
-        btnDisplayResult.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorTextDark))
-
-        imageView.setImageURI(uri)
-        img_BakgroundSketch.visibility = View.GONE
-        photoFile224 = BitmapManipulation.resizeTo224(this, uri)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        var uri: Uri? = null
-
-        if (requestCode == REQUEST_CODE_TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
-            uri = Uri.fromFile(photoFile)
-            updateUI(uri)
-
-        }
-
-        if (requestCode == REQUEST_CODE_SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
-            uri = data?.data!!
-            photoFile = FileManipluation.saveImageToTempFile(this, uri, "tempPhoto.jpg")
-            updateUI(uri)
-        }
-
-        else super.onActivityResult(requestCode, resultCode, data)
-
-
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (toggle.onOptionsItemSelected(item)) return true
+        return super.onOptionsItemSelected(item)
     }
 }
 
 
 
+class CloudGridItem(val url : String, val context: Context): Item<ViewHolder>() {
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        Picasso.get().load(url).fit().into(viewHolder.itemView.cloud_image)
+    }
+    override fun getLayout(): Int {
+        return R.layout.cloud_list_item
+    }
+}
 
+class TabsPagerAdapter(fm: FragmentManager, lifecycle: Lifecycle, private var numberOfTabs: Int) : FragmentStateAdapter(fm, lifecycle) {
 
+    override fun createFragment(position: Int): Fragment {
+        when (position) {
+            0 -> {
+                val myGaleryFragment = MyGaleryFragment()
+                return myGaleryFragment
+            }
+            1 -> {
+                val globalGaleryFragment = GlobalGaleryFragment()
+                return globalGaleryFragment
+            }
+            else -> return MyGaleryFragment()
+        }
+    }
 
+    override fun getItemCount(): Int {
+        return numberOfTabs
+    }
+}

@@ -26,5 +26,10 @@
     <string name="bePatient">Server is waking up, this takes about 30 seconds the first time</string>
     <string name="facebook_app_id">834475974015022</string>
     <string name="fb_login_protocol_scheme">fb834475974015022</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>

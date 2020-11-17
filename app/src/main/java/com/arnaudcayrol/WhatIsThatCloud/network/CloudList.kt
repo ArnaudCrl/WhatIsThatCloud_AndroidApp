@@ -4,6 +4,7 @@ import com.arnaudcayrol.WhatIsThatCloud.R
 import java.io.Serializable
 
 class CloudList  (
+    // Ordered pairs of (cloud name , cloud proba ) ordered by probability
     private val altocumulus: Double,
     private val altostratus: Double,
     private val cirrocumulus: Double,

@@ -1,59 +1,72 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
 import android.app.AlertDialog
-import android.content.DialogInterface
+import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.arnaudcayrol.WhatIsThatCloud.network.API_obj
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
-import com.arnaudcayrol.WhatIsThatCloud.recycler_view.SetupRecyclerList
-import com.arnaudcayrol.WhatIsThatCloud.utils.BitmapManipulation
 import com.arnaudcayrol.WhatIsThatCloud.utils.ColorUtils
+import com.arnaudcayrol.WhatIsThatCloud.utils.UserImage
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_result.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import java.io.File
+import kotlinx.android.synthetic.main.cloud_list_item.view.*
 
+import java.util.*
 
 class ResultActivity : AppCompatActivity() {
 
-    private lateinit var imageBitmap: Bitmap
-    private lateinit var cloudList: CloudList
+    private lateinit var pictureUri : Uri
+    private lateinit var cloudList: CloudList // Ordered pairs of (cloud name , cloud proba ) ordered by probability
     private var pageNumber : Int = 0
-    private lateinit var urlList : Map<String, String>
     private var feedbackSent : Boolean = false
-
+    private val adapter = GroupAdapter<ViewHolder>() // For recyclerview
+    private lateinit var urlList : Map<String, String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
         cloudList = (intent.getSerializableExtra("CloudList") as? CloudList)!!
-        val photoPath = intent.getSerializableExtra("UserPicture") as? String
+        pictureUri = intent.getParcelableExtra("pictureUri") as Uri
 
-        imageBitmap = BitmapFactory.decodeFile(photoPath)
-
-        picUserPicture.setImageBitmap(imageBitmap)
+        Picasso.get().load(pictureUri).into(picUserPicture)
 
         btn_left_arrow.isEnabled = false
         btn_left_arrow.setImageResource(R.drawable.left_arrow_off)
         ColorUtils.writeColoredResultText(this, txt_result, cloudList.resultList[0])
-        SetupRecyclerList.setRecyclerList(this, recyclerViewClouds, cloudList.resultList[0].first)
+
+        updateRecyclerView(cloudList.resultList[0].first)
 
         val alert = SetupConfirmationDialog()
+
+
+        btn_left_arrow.setOnClickListener {
+            goToPreviousPrediction()
+        }
+        btn_right_arrow.setOnClickListener {
+            goToNextPrediction()
+        }
+        btn_validationfeedback.setOnClickListener {
+            alert.show()
+        }
+        btn_wikiRedirect.setOnClickListener {
+            GoToURL(urlList[cloudList.resultList[pageNumber].first])
+        }
 
         urlList= mapOf(
             "Altocumulus" to getString(R.string.wikiAltocumulus),
@@ -67,34 +80,40 @@ class ResultActivity : AppCompatActivity() {
             "Stratocumulus" to getString(R.string.wikiStratocumulus),
             "Stratus" to getString(R.string.wikiStratus)
         )
+    }
 
-        btn_left_arrow.setOnClickListener {
-            GoToPreviousPrediction()
+    private fun updateRecyclerView(cloud_type: String) {
+        adapter.clear()
+        for (x in 1..9) {
+            adapter.add(CloudItem(cloud_type, x, this))
         }
-        btn_right_arrow.setOnClickListener {
-            GoToNextPrediction()
-        }
-        btn_validationfeedback.setOnClickListener {
-            alert.show()
-        }
-        btn_wikiRedirect.setOnClickListener {
-            GoToURL(urlList[cloudList.resultList[pageNumber].first])
+        recyclerViewClouds.adapter = adapter
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        return when (menuItem.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(menuItem)
         }
     }
 
     private fun SetupConfirmationDialog(): AlertDialog{
+
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.Confirm))
         builder.setMessage(getString(R.string.IsThisResultCorrect))
 
-        builder.setPositiveButton(getString(R.string.Yes)
-        ) { dialog, _ ->
+        builder.setPositiveButton(getString(R.string.Yes))
+        { dialog, _ ->
             btn_validationfeedback.isEnabled = false
             btn_validationfeedback.setImageResource(R.drawable.validation_icon_clicked)
-            Handler().postDelayed({
-                Toast.makeText(this, getString(R.string.ThankYouForYourFeedback), Toast.LENGTH_LONG).show()
-            }, 1000)
-            uploadImage(BitmapManipulation.saveBitmapToJPG(this, BitmapManipulation.resizeTo1024px(imageBitmap)), cloudList.resultList[pageNumber].first)
+            Handler().postDelayed({Toast.makeText(this, getString(R.string.ThankYouForYourFeedback), Toast.LENGTH_LONG).show()}, 1000)
+
+            addToFirabaseDatabase()
+
             feedbackSent = true
             dialog.dismiss()
         }
@@ -108,7 +127,10 @@ class ResultActivity : AppCompatActivity() {
     }
 
 
-    private fun GoToNextPrediction() {
+    private fun goToNextPrediction() {
+
+        fetchUsers()
+
         if (pageNumber == 0){
             btn_left_arrow.isEnabled = true
             btn_left_arrow.setImageResource(R.drawable.left_arrow_on)
@@ -118,12 +140,12 @@ class ResultActivity : AppCompatActivity() {
             btn_right_arrow.setImageResource(R.drawable.right_arrow_off)
         }
         pageNumber++
-        SetupRecyclerList.resetRecyclerView()
         ColorUtils.writeColoredResultText(this, txt_result, cloudList.resultList[pageNumber])
-        SetupRecyclerList.setRecyclerList(this, recyclerViewClouds, cloudList.resultList[pageNumber].first)
+        updateRecyclerView(cloudList.resultList[pageNumber].first)
+
     }
 
-    private fun GoToPreviousPrediction() {
+    private fun goToPreviousPrediction() {
         if (pageNumber == cloudList.resultList.size - 1){
             btn_right_arrow.isEnabled = true
             btn_right_arrow.setImageResource(R.drawable.right_arrow_on)
@@ -133,34 +155,61 @@ class ResultActivity : AppCompatActivity() {
             btn_left_arrow.setImageResource(R.drawable.left_arrow_off)
         }
         pageNumber--
-        SetupRecyclerList.resetRecyclerView()
         ColorUtils.writeColoredResultText(this, txt_result, cloudList.resultList[pageNumber])
-        SetupRecyclerList.setRecyclerList(this, recyclerViewClouds, cloudList.resultList[pageNumber].first)
-    }
+        updateRecyclerView(cloudList.resultList[pageNumber].first)
 
-    override fun onDestroy() {
-        super.onDestroy()
-        SetupRecyclerList.resetRecyclerView()
-        if (!feedbackSent) {
-            uploadImage(BitmapManipulation.saveBitmapToJPG(this, BitmapManipulation.resizeTo1024px(imageBitmap)), "NO_FEEDBACK")
-        }
     }
 
 
-    private fun uploadImage(photoFile224: File, name: String) {
-        CoroutineScope(Job() + Dispatchers.Main ).launch {
+    private fun addToFirabaseDatabase() {
 
-            // Creating the request to the web server, sending a 224x224 px image
-            val fileReqBody = RequestBody.create(MediaType.parse("image/*"), photoFile224)
-            val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", name, fileReqBody)
-            val getResultDeffered = API_obj.retrofitService.uploadFeedbackAsync(part)
-            try {
-                println("Success: ${getResultDeffered.await().Result}")
-            } catch (e: Exception) {
-//                Toast.makeText(applicationContext, "Failure: ${e.message}", Toast.LENGTH_LONG).show()
-                println("Failure: ${e.message}")
+        val user = FirebaseAuth.getInstance().currentUser
+        val username = if (user!!.isAnonymous) "Anonymous" else user.displayName!!
+
+        val filename = UUID.randomUUID().toString()
+        val storageRef = FirebaseStorage.getInstance().getReference("/images/$filename")
+
+        storageRef.putFile(pictureUri)
+            .addOnSuccessListener {
+                Log.d("firebaseDatabase", "Successfully uploaded image: ${it.metadata?.path}")
+                storageRef.downloadUrl.addOnSuccessListener {
+                    val databaseRef = FirebaseDatabase.getInstance().getReference("/users/${user.uid}/pictures/$filename")
+                    val userImage = UserImage(it.toString(), cloudList.resultList[pageNumber].first , mutableListOf<String>())
+                    userImage.ratings.add(user.uid)
+                    userImage.ratings.add("autre uid")
+
+
+                    databaseRef.setValue(userImage)
+                        .addOnSuccessListener {
+                            Log.d("firebaseDatabase", "Successfully added image to database")
+                        }
+                        .addOnFailureListener {
+                            Log.d("firebaseDatabase", "Failed to set value to database: ${it.message}")
+                        }
+                }
             }
-        }
+            .addOnFailureListener {
+                Log.d("firebaseDatabase", "Failed to upload image to storage: ${it.message}")
+            }
+    }
+
+
+    private fun fetchUsers() {
+        val ref = FirebaseDatabase.getInstance().getReference("/users")
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+
+            override fun onDataChange(p0: DataSnapshot) {
+
+                p0.children.forEach {
+                    val name = it.child("name").value.toString()
+                    Log.d("fetchUsers", name)
+                }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                Log.d("fetchUsers", "error : $p0")
+            }
+        })
     }
 
     fun GoToURL(url: String?) {
@@ -171,6 +220,19 @@ class ResultActivity : AppCompatActivity() {
 
 }
 
+class CloudItem(val cloudType : String, val cloudIndex : Int, val context: Context): Item<ViewHolder>() {
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        val name = (cloudType + "_" + cloudIndex).toLowerCase(Locale.ROOT)
+//        Log.d("recyclerview", "name: $name")
+        val id: Int = context.resources.getIdentifier(name, "drawable", context.packageName)
+//        Log.d("recyclerview", "item id: $id")
+        Picasso.get().load(id).into(viewHolder.itemView.cloud_image)
+    }
+
+    override fun getLayout(): Int {
+        return R.layout.cloud_list_item
+    }
+}
 
 
 
