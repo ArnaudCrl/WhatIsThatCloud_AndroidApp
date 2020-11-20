@@ -2,15 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/item1"
-        android:title="item1" />
+        android:id="@+id/classment"
+        android:title="Classement" />
 
     <item
-        android:id="@+id/item2"
-        android:title="item1" />
-
-    <item
-        android:id="@+id/item3"
-        android:title="item1" />
-
+        android:id="@+id/about"
+        android:title="A propos" />
+    <group android:id="@+id/grouptohide">
+        <item
+            android:id="@+id/deconnexion"
+            android:title="Se déconnecter" />
+        <item
+            android:id="@+id/connexion"
+            android:title="Se connecter" />
+    </group>
 </menu>

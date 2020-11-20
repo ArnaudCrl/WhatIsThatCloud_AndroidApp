@@ -15,25 +15,34 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-
         <!-- Activities -->
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" />
+
+        <activity android:name=".GalleryFocus">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity android:name=".registration.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".registration.SplashActivity"/>
-        <activity android:name=".NewObservationActivity" >
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".MainActivity" />
-    </activity>
+
+        <activity android:name=".NewObservationActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
         <activity android:name=".ResultActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".NewObservationActivity" />
         </activity>
+
         <activity
             android:name=".registration.LoginActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
@@ -47,9 +56,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/fileprovider" />
-        </provider>
-
-        <!-- Facebook Stuff -->
+        </provider> <!-- Facebook Stuff -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

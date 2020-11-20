@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
 import com.arnaudcayrol.WhatIsThatCloud.utils.ColorUtils
-import com.arnaudcayrol.WhatIsThatCloud.utils.UserImage
+import com.arnaudcayrol.WhatIsThatCloud.utils.UserPicture
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -24,9 +24,10 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_result.*
-import kotlinx.android.synthetic.main.cloud_list_item.view.*
+import kotlinx.android.synthetic.main.example_cloud_list_item.view.*
 
 import java.util.*
+import kotlin.collections.HashMap
 
 class ResultActivity : AppCompatActivity() {
 
@@ -112,7 +113,7 @@ class ResultActivity : AppCompatActivity() {
             btn_validationfeedback.setImageResource(R.drawable.validation_icon_clicked)
             Handler().postDelayed({Toast.makeText(this, getString(R.string.ThankYouForYourFeedback), Toast.LENGTH_LONG).show()}, 1000)
 
-            addToFirabaseDatabase()
+            addFeedbackToFirabaseDatabase()
 
             feedbackSent = true
             dialog.dismiss()
@@ -128,8 +129,6 @@ class ResultActivity : AppCompatActivity() {
 
 
     private fun goToNextPrediction() {
-
-        fetchUsers()
 
         if (pageNumber == 0){
             btn_left_arrow.isEnabled = true
@@ -161,11 +160,11 @@ class ResultActivity : AppCompatActivity() {
     }
 
 
-    private fun addToFirabaseDatabase() {
+    private fun addFeedbackToFirabaseDatabase() {
 
         val user = FirebaseAuth.getInstance().currentUser
-        val username = if (user!!.isAnonymous) "Anonymous" else user.displayName!!
 
+        // Add to Firebase Storage
         val filename = UUID.randomUUID().toString()
         val storageRef = FirebaseStorage.getInstance().getReference("/images/$filename")
 
@@ -173,13 +172,12 @@ class ResultActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 Log.d("firebaseDatabase", "Successfully uploaded image: ${it.metadata?.path}")
                 storageRef.downloadUrl.addOnSuccessListener {
-                    val databaseRef = FirebaseDatabase.getInstance().getReference("/users/${user.uid}/pictures/$filename")
-                    val userImage = UserImage(it.toString(), cloudList.resultList[pageNumber].first , mutableListOf<String>())
-                    userImage.ratings.add(user.uid)
-                    userImage.ratings.add("autre uid")
 
+                    // Add to Firebase Database
+                    val userPicture = UserPicture(user?.uid.toString(), it.toString(), user?.displayName.toString() ,cloudList.resultList[pageNumber].first)
 
-                    databaseRef.setValue(userImage)
+                    val databaseRef = FirebaseDatabase.getInstance().getReference("/users/${user?.uid}/pictures/$filename")
+                    databaseRef.setValue(userPicture)
                         .addOnSuccessListener {
                             Log.d("firebaseDatabase", "Successfully added image to database")
                         }
@@ -194,23 +192,6 @@ class ResultActivity : AppCompatActivity() {
     }
 
 
-    private fun fetchUsers() {
-        val ref = FirebaseDatabase.getInstance().getReference("/users")
-        ref.addListenerForSingleValueEvent(object: ValueEventListener {
-
-            override fun onDataChange(p0: DataSnapshot) {
-
-                p0.children.forEach {
-                    val name = it.child("name").value.toString()
-                    Log.d("fetchUsers", name)
-                }
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-                Log.d("fetchUsers", "error : $p0")
-            }
-        })
-    }
 
     fun GoToURL(url: String?) {
         val uri: Uri = Uri.parse(url)
@@ -223,14 +204,12 @@ class ResultActivity : AppCompatActivity() {
 class CloudItem(val cloudType : String, val cloudIndex : Int, val context: Context): Item<ViewHolder>() {
     override fun bind(viewHolder: ViewHolder, position: Int) {
         val name = (cloudType + "_" + cloudIndex).toLowerCase(Locale.ROOT)
-//        Log.d("recyclerview", "name: $name")
         val id: Int = context.resources.getIdentifier(name, "drawable", context.packageName)
-//        Log.d("recyclerview", "item id: $id")
         Picasso.get().load(id).into(viewHolder.itemView.cloud_image)
     }
 
     override fun getLayout(): Int {
-        return R.layout.cloud_list_item
+        return R.layout.example_cloud_list_item
     }
 }
 

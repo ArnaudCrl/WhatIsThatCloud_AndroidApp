@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.arnaudcayrol.WhatIsThatCloud.MainActivity
 import com.arnaudcayrol.WhatIsThatCloud.NewObservationActivity
 import com.arnaudcayrol.WhatIsThatCloud.R
+import com.arnaudcayrol.WhatIsThatCloud.utils.User
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -20,6 +22,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
 
@@ -66,21 +69,26 @@ class LoginActivity: AppCompatActivity() {
 ////////////////////////// ANONYMOUS SIGN IN //////////////////////////////////
 
     private fun anonymousLogin() {
-        FirebaseAuth.getInstance().signInAnonymously()
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val intent = Intent(this, NewObservationActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
+        val user = FirebaseAuth.getInstance().currentUser
+        if  (user != null){
+            goToMainActivity()
+        } else {
+            FirebaseAuth.getInstance().signInAnonymously()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        saveUserToFirebaseDatabase()
+
 
 //                    val user = FirebaseAuth.getInstance().currentUser
 //                    Toast.makeText(this, user!!.uid, Toast.LENGTH_SHORT).show()
 //                    FirebaseAuth.getInstance().currentUser!!.linkWithCredential(credential)
+                    }
                 }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to log in: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Failed to log in: ${it.message}", Toast.LENGTH_SHORT)
+                        .show()
+                }
+        }
     }
 
 ////////////////////////// FACEBOOK SIGN IN //////////////////////////////////
@@ -107,17 +115,36 @@ class LoginActivity: AppCompatActivity() {
 
     private fun firebaseAuthWithFacebook(result: LoginResult?){
         val credential = FacebookAuthProvider.getCredential(result?.accessToken?.token!!)
-        FirebaseAuth.getInstance().signInWithCredential(credential)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val intent = Intent(this, NewObservationActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
+        val user = FirebaseAuth.getInstance().currentUser
+        if  (user != null){ // Try to upgrade anonymous user with google / facebook profile
+            FirebaseAuth.getInstance().currentUser?.linkWithCredential(credential)
+                ?.addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        goToMainActivity()
+                    }
                 }
-            }
-            .addOnFailureListener {
+                ?.addOnFailureListener {
+                    FirebaseAuth.getInstance().signInWithCredential(credential)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                goToMainActivity()
+                            }
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, "Failed to log in: ${it.message}", Toast.LENGTH_SHORT).show()
+                        }
+                }
+        } else {
+            FirebaseAuth.getInstance().signInWithCredential(credential)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        saveUserToFirebaseDatabase()
+                    }
+                }
+                .addOnFailureListener {
                     Toast.makeText(this, "Failed to log in: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+                }
+        }
     }
 
 ////////////////////////// GOOGLE SIGN IN //////////////////////////////////
@@ -129,17 +156,37 @@ class LoginActivity: AppCompatActivity() {
 
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        FirebaseAuth.getInstance().signInWithCredential(credential)
-            .addOnCompleteListener(this) {
-                if (it.isSuccessful) {
-                    val intent = Intent(this, NewObservationActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
+        val user = FirebaseAuth.getInstance().currentUser
+        if  (user != null){ // Try to upgrade anonymous user with google / facebook profile
+            FirebaseAuth.getInstance().currentUser?.linkWithCredential(credential)
+                ?.addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        goToMainActivity()
+                    }
                 }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to log in: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
+                ?.addOnFailureListener {
+//                    Toast.makeText(this, "Failed to log in: ${it.message}", Toast.LENGTH_SHORT).show()
+                    FirebaseAuth.getInstance().signInWithCredential(credential)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                goToMainActivity()
+                            }
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, "Failed to log in: ${it.message}", Toast.LENGTH_SHORT).show()
+                        }
+                }
+        } else {
+            FirebaseAuth.getInstance().signInWithCredential(credential)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        saveUserToFirebaseDatabase()
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Failed to log in: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
 
@@ -165,6 +212,31 @@ class LoginActivity: AppCompatActivity() {
         }
     }
 
+    private fun saveUserToFirebaseDatabase() {
+        val fireabse_user = FirebaseAuth.getInstance().currentUser
+
+        val user = if (fireabse_user!!.isAnonymous){
+            User("Anonymous", 0)
+        } else {
+            User(fireabse_user.displayName.toString(), 0)
+        }
+        val ref = FirebaseDatabase.getInstance().getReference("/users/${fireabse_user.uid}")
+        ref.setValue(user)
+            .addOnSuccessListener {
+                Log.d("save user to db", "Finally we saved the user to Firebase Database")
+                goToMainActivity()
+
+            }
+            .addOnFailureListener {
+                Log.d("save user to db", "Failed to set value to database: ${it.message}")
+            }
+    }
+
+    private fun goToMainActivity(){
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
 
 //    fun printHashKey(pContext: Context) {
 //        try {

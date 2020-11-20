@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_new_observation.*
-import kotlinx.android.synthetic.main.cloud_list_item.view.*
+//import kotlinx.android.synthetic.main.cloud_list_item.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -35,7 +35,6 @@ class NewObservationActivity : AppCompatActivity() {
     private lateinit var pictureUri : Uri
     private lateinit var photoFile: File
     private lateinit var photoFile224: File
-    private val user = FirebaseAuth.getInstance().currentUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,17 +50,10 @@ class NewObservationActivity : AppCompatActivity() {
         }
 
         btnTakePic.setOnClickListener{
-            if (user != null) {
-                            FirebaseAuth.getInstance().signOut()
-            Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
-//                Toast.makeText(this, user.displayName, Toast.LENGTH_SHORT).show()
-            }
-//            takePicture()
+            takePicture()
         }
 
         btnOpenGalery.setOnClickListener{
-//            FirebaseAuth.getInstance().signOut()
-//            Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
             openGalery()
         }
 

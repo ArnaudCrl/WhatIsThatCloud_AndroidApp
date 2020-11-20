@@ -14,8 +14,8 @@ class SplashActivity : Activity() {
         setContentView(com.arnaudcayrol.WhatIsThatCloud.R.layout.activity_splash)
 
 // decide here whether to navigate to Login or Main Activity
-        val uid = FirebaseAuth.getInstance().uid
-        if (uid != null) { // User already logged in and therefor has an uid
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null && !user.isAnonymous) { // User already logged in and is not anonymous
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()

@@ -1,13 +1,16 @@
 package com.arnaudcayrol.WhatIsThatCloud.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.arnaudcayrol.WhatIsThatCloud.CloudGridItem
+import com.arnaudcayrol.WhatIsThatCloud.GalleryFocus
 import com.arnaudcayrol.WhatIsThatCloud.R
+import com.arnaudcayrol.WhatIsThatCloud.ResultActivity
+import com.arnaudcayrol.WhatIsThatCloud.utils.CloudGridItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -27,6 +30,13 @@ class MyGaleryFragment : Fragment(R.layout.fragment_my_galery) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         updateGalery()
         super.onViewCreated(view, savedInstanceState)
+
+        adapter.setOnItemClickListener { item, view ->
+            val intent = Intent(activity, GalleryFocus::class.java)
+            val extra = item as CloudGridItem
+            intent.putExtra("picture", extra.image_ref)
+            startActivity(intent)
+        }
     }
 
     private fun updateGalery(){
@@ -35,14 +45,9 @@ class MyGaleryFragment : Fragment(R.layout.fragment_my_galery) {
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
 
-
                 p0.child("pictures").children.forEach{pictures -> // Iterate over pictures
-
-                    Log.d("fetchUsers_retreive", pictures.child("url").value.toString())
-                    adapter.add(CloudGridItem(pictures.child("url").value.toString(), activity!!.baseContext))
-
+                    adapter.add(CloudGridItem(pictures.ref.toString()))
                 }
-
                 grid_layout.adapter = adapter
             }
 
