@@ -10,27 +10,29 @@
         android:id="@+id/gallery_focus_image_view"
         android:layout_width="400dp"
         android:layout_height="400dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/txt_username_prediction"
+        app:layout_constraintBottom_toTopOf="@+id/focus_txt_like_counter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/colorBackgroundLight"/>
+        app:srcCompat="@color/colorBackgroundLight" />
 
     <TextView
         android:id="@+id/focus_txt_like_counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="32dp"
         android:text="12"
         android:textColor="#000000"
         android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/txt_username_prediction"
         app:layout_constraintEnd_toStartOf="@+id/gallery_focus_heart"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gallery_focus_image_view" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/gallery_focus_heart"
@@ -51,14 +53,14 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="PSEUDO pense que c'est un NUAGE"
+        android:textAlignment="center"
         android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_approve"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_goneMarginBottom="24dp"
-        />
+        app:layout_goneMarginBottom="24dp" />
 
     <Button
         android:id="@+id/btn_approve"
@@ -83,4 +85,6 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/btn_approve"
         app:layout_constraintTop_toTopOf="@+id/btn_approve" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

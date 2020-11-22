@@ -6,13 +6,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.MyGaleryFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/grid_layout"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="3" />
+        android:id="@+id/my_gallery_swipe_refresh">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/personnal_grid_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="3" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

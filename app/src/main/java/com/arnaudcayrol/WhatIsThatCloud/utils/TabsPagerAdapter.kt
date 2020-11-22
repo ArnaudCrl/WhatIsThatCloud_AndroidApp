@@ -10,14 +10,10 @@ import com.arnaudcayrol.WhatIsThatCloud.fragments.MyGaleryFragment
 class TabsPagerAdapter(fm: FragmentManager, lifecycle: Lifecycle, private var numberOfTabs: Int) : FragmentStateAdapter(fm, lifecycle) {
 
     override fun createFragment(position: Int): Fragment {
-        when (position) {
-            0 -> {
-                return MyGaleryFragment()
-            }
-            1 -> {
-                return GlobalGaleryFragment()
-            }
-            else -> return MyGaleryFragment()
+        return when (position) {
+            0 -> MyGaleryFragment()
+            1 -> GlobalGaleryFragment()
+            else -> MyGaleryFragment()
         }
     }
 

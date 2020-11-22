@@ -114,6 +114,7 @@ class ResultActivity : AppCompatActivity() {
             Handler().postDelayed({Toast.makeText(this, getString(R.string.ThankYouForYourFeedback), Toast.LENGTH_LONG).show()}, 1000)
 
             addFeedbackToFirabaseDatabase()
+            onBackPressed()
 
             feedbackSent = true
             dialog.dismiss()
@@ -198,6 +199,8 @@ class ResultActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
     }
+
+
 
 }
 
