@@ -14,33 +14,24 @@
         android:roundIcon="@drawable/whatisthatcloudicon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <!-- Activities -->
         <activity android:name=".MainActivity" />
-
         <activity android:name=".GalleryFocus">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
         <activity android:name=".registration.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".NewObservationActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-
-        <activity android:name=".ResultActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".NewObservationActivity" />
+        <activity android:name=".ResultActivity" />
+        <activity android:name=".CloudExampleGrid">
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value=".GalleryFocus" />-->
         </activity>
 
         <activity

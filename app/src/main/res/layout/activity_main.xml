@@ -8,6 +8,7 @@
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_activity_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -30,31 +31,30 @@
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:elevation="8dp"
             android:background="?android:windowBackground"
-            app:layout_constraintTop_toTopOf="parent"
+            android:elevation="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:tabGravity="center"
-            app:tabMode="fixed"/>
+            app:tabMode="fixed" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/tabs_viewpager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tab_layout" >
+            app:layout_constraintTop_toBottomOf="@+id/tab_layout">
 
         </androidx.viewpager2.widget.ViewPager2>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_new_activity_selector"
             android:layout_width="match_parent"
-            android:background="@drawable/top_border"
             android:layout_height="170dp"
+            android:background="@drawable/top_border"
 
             app:layout_constraintBottom_toBottomOf="parent">
 
@@ -66,7 +66,6 @@
                 android:background="@drawable/ic_baseline_camera_alt_24"
                 app:layout_constraintBottom_toTopOf="@+id/textView"
                 app:layout_constraintEnd_toStartOf="@+id/btn_gallery"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
@@ -78,7 +77,6 @@
                 android:background="@drawable/ic_baseline_image_24"
                 app:layout_constraintBottom_toTopOf="@+id/textView2"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/btn_camera"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
@@ -91,7 +89,6 @@
                 android:text="Prendre une photo"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/btn_camera"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/btn_camera"
                 app:layout_constraintTop_toBottomOf="@+id/btn_camera" />
 
@@ -103,7 +100,6 @@
                 android:text="Choisir une image"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/btn_gallery"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/btn_gallery"
                 app:layout_constraintTop_toBottomOf="@+id/btn_gallery" />
 
@@ -118,7 +114,6 @@
                 android:rotation="90"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/textView2"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/textView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -135,6 +130,8 @@
         android:fitsSystemWindows="true" >
 
     </com.google.android.material.navigation.NavigationView>
+
+
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

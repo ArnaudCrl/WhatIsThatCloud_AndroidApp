@@ -1,42 +1,44 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
+import android.animation.Animator
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.MenuItem
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
 import com.arnaudcayrol.WhatIsThatCloud.utils.ColorUtils
+import com.arnaudcayrol.WhatIsThatCloud.utils.ExampleResultItem
 import com.arnaudcayrol.WhatIsThatCloud.utils.UserPicture
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ServerValue
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.component1
+import com.google.firebase.storage.ktx.component2
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_result.*
-import kotlinx.android.synthetic.main.example_cloud_list_item.view.*
-
 import java.util.*
-import kotlin.collections.HashMap
 
 class ResultActivity : AppCompatActivity() {
 
     private lateinit var pictureUri : Uri
     private lateinit var cloudList: CloudList // Ordered pairs of (cloud name , cloud proba ) ordered by probability
     private var pageNumber : Int = 0
-    private var feedbackSent : Boolean = false
     private val adapter = GroupAdapter<ViewHolder>() // For recyclerview
     private lateinit var urlList : Map<String, String>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,15 +48,64 @@ class ResultActivity : AppCompatActivity() {
         pictureUri = intent.getParcelableExtra("pictureUri") as Uri
 
         Picasso.get().load(pictureUri).into(picUserPicture)
-
+        xp_group.isVisible = false
         btn_left_arrow.isEnabled = false
         btn_left_arrow.setImageResource(R.drawable.left_arrow_off)
         ColorUtils.writeColoredResultText(this, txt_result, cloudList.resultList[0])
 
         updateRecyclerView(cloudList.resultList[0].first)
 
+        xp_group.isVisible = false
         val alert = SetupConfirmationDialog()
 
+
+        // First connexion
+        val prefs : SharedPreferences = getSharedPreferences("com.arnaudcayrol.WhatIsThatCloud.sharedprefs", Context.MODE_PRIVATE)
+
+        val first_start = prefs.getBoolean("first_start", true)
+
+        Log.d("shared prefs", first_start.toString())
+//        prefs.edit().putBoolean("first_start", true).apply()
+
+
+        val tapTargetSequence = TapTargetSequence(this)
+            .targets(
+                TapTarget.forView(txt_result, "La prédiction de l'IA", "Ici vous pouvez lire le nom  du/des nuages choisi par l'IA avec son degré de confiance associé")
+                    .outerCircleColor(R.color.blue_green)      // Specify a color for the outer circle
+                    .outerCircleAlpha(0.90f)            // Specify the alpha amount for the outer circle
+                    .targetCircleColor(R.color.white)   // Specify a color for the target circle
+                    .titleTextSize(30)                  // Specify the size (in sp) of the title text
+                    .titleTextColor(R.color.white)      // Specify the color of the title text
+                    .descriptionTextSize(20)            // Specify the size (in sp) of the description text
+                    .descriptionTextColor(R.color.white)  // Specify the color of the description text
+                    .transparentTarget(false)
+                    .targetRadius(120),
+
+                TapTarget.forView(btn_validationfeedback, "Validez l'identification", "Si le résultat vous semble correct, validez le afin de renforcer la précision de l'IA. \n\nVous pouvez voir d'autres propositions à l'aide des flèches si celle-ci ne correspond pas.\n\nValider un résultat vous rapporte des points d'experience !")
+                    .outerCircleColor(R.color.blue_green)      // Specify a color for the outer circle
+                    .outerCircleAlpha(0.90f)            // Specify the alpha amount for the outer circle
+                    .targetCircleColor(R.color.sky_blue)   // Specify a color for the target circle
+                    .titleTextSize(30)                  // Specify the size (in sp) of the title text
+                    .titleTextColor(R.color.white)      // Specify the color of the title text
+                    .descriptionTextSize(20)            // Specify the size (in sp) of the description text
+                    .descriptionTextColor(R.color.white)  // Specify the color of the description text
+                    .transparentTarget(true))
+
+            .continueOnCancel(true)
+
+            .listener(object : TapTargetSequence.Listener {
+                override fun onSequenceCanceled(lastTarget: TapTarget?) {}
+                override fun onSequenceStep(lastTarget: TapTarget?, targetClicked: Boolean) {}
+                override fun onSequenceFinish() {
+                    // TODO something
+                }
+            })
+
+        if (first_start){
+            tapTargetSequence.start()
+            prefs.edit().putBoolean("first_start", false).apply()
+
+        }
 
         btn_left_arrow.setOnClickListener {
             goToPreviousPrediction()
@@ -62,6 +113,7 @@ class ResultActivity : AppCompatActivity() {
         btn_right_arrow.setOnClickListener {
             goToNextPrediction()
         }
+
         btn_validationfeedback.setOnClickListener {
             alert.show()
         }
@@ -83,23 +135,35 @@ class ResultActivity : AppCompatActivity() {
         )
     }
 
+
+
+
     private fun updateRecyclerView(cloud_type: String) {
-        adapter.clear()
-        for (x in 1..9) {
-            adapter.add(CloudItem(cloud_type, x, this))
-        }
-        recyclerViewClouds.adapter = adapter
+        Log.d("examples", cloud_type)
+
+        FirebaseStorage.getInstance().getReference("examples/${cloud_type.toLowerCase(Locale.ROOT)}")
+            .listAll()
+            .addOnSuccessListener { (items, prefixes) ->
+                prefixes.forEach { prefix ->
+                }
+
+                items.forEach { item ->
+//                    Log.d("examples", "working")
+
+                    item.downloadUrl.addOnSuccessListener {
+                        Log.d("examples", it.toString())
+
+                        adapter.add(ExampleResultItem(it.toString()))
+                    }
+                }
+                recyclerViewClouds.adapter = adapter
+            }
+            .addOnFailureListener {
+                Log.d("examples", it.toString())
+
+            }
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        return when (menuItem.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(menuItem)
-        }
-    }
 
     private fun SetupConfirmationDialog(): AlertDialog{
 
@@ -114,9 +178,6 @@ class ResultActivity : AppCompatActivity() {
             Handler().postDelayed({Toast.makeText(this, getString(R.string.ThankYouForYourFeedback), Toast.LENGTH_LONG).show()}, 1000)
 
             addFeedbackToFirabaseDatabase()
-            onBackPressed()
-
-            feedbackSent = true
             dialog.dismiss()
         }
 
@@ -175,11 +236,15 @@ class ResultActivity : AppCompatActivity() {
                 storageRef.downloadUrl.addOnSuccessListener {
 
                     // Add to Firebase Database
-                    val userPicture = UserPicture(user?.uid.toString(), it.toString(), user?.displayName.toString() ,cloudList.resultList[pageNumber].first)
+                    val username = if (user!!.isAnonymous) "Anonymous" else user?.displayName.toString()
 
                     val databaseRef = FirebaseDatabase.getInstance().getReference("/users/${user?.uid}/pictures/$filename")
+                    val userPicture = UserPicture(user?.uid.toString(), it.toString(), username, cloudList.resultList[pageNumber].first)
                     databaseRef.setValue(userPicture)
                         .addOnSuccessListener {
+                            val ref = FirebaseDatabase.getInstance().getReference("/users/${user?.uid}")
+                            ref.child("experience").setValue(ServerValue.increment(100)) // Gives 100 xp to user for submitting an image
+                            playXPGainAnimation()
                             Log.d("firebaseDatabase", "Successfully added image to database")
                         }
                         .addOnFailureListener {
@@ -201,20 +266,40 @@ class ResultActivity : AppCompatActivity() {
     }
 
 
+    fun playXPGainAnimation(){
+        xp_group.isVisible = true // reset view position
+        xp_group.translationY = 0f
+        xp_group.alpha = 1f
+        xp_group.scaleX = 1f
+        xp_group.scaleY = 1f
+
+        xp_group.animate().apply {
+            duration = 1000
+            translationYBy(-200f)
+            scaleX(1.5f)
+            scaleY(1.5f)
+            interpolator = AccelerateDecelerateInterpolator()
+        }.withStartAction() {
+            xp_gain_animation.playAnimation()
+        }.withEndAction {
+            xp_group.isVisible = false
+            onBackPressed()
+        }.start()
+    }
 
 }
 
-class CloudItem(val cloudType : String, val cloudIndex : Int, val context: Context): Item<ViewHolder>() {
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-        val name = (cloudType + "_" + cloudIndex).toLowerCase(Locale.ROOT)
-        val id: Int = context.resources.getIdentifier(name, "drawable", context.packageName)
-        Picasso.get().load(id).into(viewHolder.itemView.cloud_image)
-    }
-
-    override fun getLayout(): Int {
-        return R.layout.example_cloud_list_item
-    }
-}
+//class CloudItem(val cloudType : String, val cloudIndex : Int, val context: Context): Item<ViewHolder>() {
+//    override fun bind(viewHolder: ViewHolder, position: Int) {
+//        val name = (cloudType + "_" + cloudIndex).toLowerCase(Locale.ROOT)
+//        val id: Int = context.resources.getIdentifier(name, "drawable", context.packageName)
+//        Picasso.get().load(id).into(viewHolder.itemView.cloud_image)
+//    }
+//
+//    override fun getLayout(): Int {
+//        return R.layout.example_cloud_list_item
+//    }
+//}
 
 
 

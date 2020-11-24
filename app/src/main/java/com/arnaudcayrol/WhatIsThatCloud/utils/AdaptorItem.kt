@@ -9,11 +9,25 @@ import com.squareup.picasso.Picasso
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.galery_cloud_grid_item.view.*
+import kotlinx.android.synthetic.main.example_cloud_grid_item.view.*
+import kotlinx.android.synthetic.main.result_grid_item.view.*
 import java.sql.Timestamp
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
+
+class ExampleGridItem(val url : String): Item<ViewHolder>() {
+
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+
+        Picasso.get().load(url).resize(256,256).centerCrop().into(viewHolder.itemView.example_cloud_image)
+
+    }
+    override fun getLayout(): Int {
+        return R.layout.example_cloud_grid_item
+    }
+}
 
 class CloudGridItem(val image_ref : String): Item<ViewHolder>() {
 
@@ -37,5 +51,17 @@ class CloudGridItem(val image_ref : String): Item<ViewHolder>() {
     }
     override fun getLayout(): Int {
         return R.layout.galery_cloud_grid_item
+    }
+}
+
+class ExampleResultItem(private val url : String): Item<ViewHolder>() {
+
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+
+        Picasso.get().load(url).resize(256,256).centerCrop().into(viewHolder.itemView.result_cloud_image)
+
+    }
+    override fun getLayout(): Int {
+        return R.layout.result_grid_item
     }
 }

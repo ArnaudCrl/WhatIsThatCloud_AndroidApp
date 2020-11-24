@@ -1,6 +1,7 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,16 +9,20 @@ import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
+import com.arnaudcayrol.WhatIsThatCloud.utils.ExampleGridItem
 import com.arnaudcayrol.WhatIsThatCloud.utils.UserPicture
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_gallery_focus.*
+import kotlinx.android.synthetic.main.activity_gallery_focus.xp_gain_animation
+import kotlinx.android.synthetic.main.activity_gallery_focus.xp_group
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_new_observation.*
 import kotlinx.android.synthetic.main.activity_result.*
@@ -79,6 +84,12 @@ class GalleryFocus : AppCompatActivity() {
             }
         })
 
+        xp_group.isVisible = false
+
+        txt_see_examples.setOnClickListener(){
+            startExampleGridActivity()
+        }
+
         gallery_focus_heart.setOnClickListener(){
             onHeartClicked(ref)
         }
@@ -89,6 +100,23 @@ class GalleryFocus : AppCompatActivity() {
         btn_disapprove.setOnClickListener(){
             onDisagreeClicked(ref)
         }
+    }
+
+    fun startExampleGridActivity(){
+
+        val ref = FirebaseDatabase.getInstance().getReferenceFromUrl(image_ref + "/prediction")
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val intent = Intent(this@GalleryFocus, CloudExampleGrid::class.java)
+                intent.putExtra("cloud_type", p0.value.toString().toLowerCase())
+                startActivity(intent)
+            }
+        })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -120,12 +148,13 @@ class GalleryFocus : AppCompatActivity() {
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.Confirm))
-        builder.setMessage(getString(R.string.IsThisResultCorrect))
+        builder.setMessage("Souhaitez-vous vraiment supprimer cette image de la base de donnée ?")
 
         builder.setPositiveButton(getString(R.string.Yes))
         { dialog, _ ->
             FirebaseDatabase.getInstance().getReferenceFromUrl(image_ref).removeValue().addOnCompleteListener() {
                 if(it.isSuccessful){
+                    Toast.makeText(this, "Images supprimée", Toast.LENGTH_SHORT).show()
                     onBackPressed()
                 }
             }
@@ -139,6 +168,26 @@ class GalleryFocus : AppCompatActivity() {
         }
 
         return builder.create()
+    }
+
+    fun playXPGainAnimation(){
+        xp_group.isVisible = true // reset view position
+        xp_group.translationY = 0f
+        xp_group.alpha = 1f
+        xp_group.scaleX = 1f
+        xp_group.scaleY = 1f
+
+        xp_group.animate().apply {
+            duration = 1000
+            translationYBy(-200f)
+            scaleX(1.5f)
+            scaleY(1.5f)
+            interpolator = AccelerateDecelerateInterpolator()
+        }.withStartAction() {
+            xp_gain_animation.playAnimation()
+        }.withEndAction {
+            xp_group.isVisible = false
+        }.start()
     }
 
     private fun onHeartClicked(postRef: DatabaseReference) {
@@ -197,8 +246,20 @@ class GalleryFocus : AppCompatActivity() {
                 currentData: DataSnapshot?
             ) {
                 if (committed){
-                btn_approve.isVisible = false
-                btn_disapprove.isVisible = false
+                    val ref = FirebaseDatabase.getInstance().getReferenceFromUrl(image_ref + "/uid")
+                    ref.addListenerForSingleValueEvent(object: ValueEventListener {
+                        override fun onCancelled(error: DatabaseError) {}
+                        override fun onDataChange(p0: DataSnapshot) {
+                            val author_uid = p0.value.toString()
+                            val author_ref = FirebaseDatabase.getInstance().getReference("/users/${author_uid}")
+                            author_ref.child("experience").setValue(ServerValue.increment(20))
+                        }
+                    })
+                    playXPGainAnimation()
+                    val current_user_ref = FirebaseDatabase.getInstance().getReference("/users/${current_user?.uid}")
+                    current_user_ref.child("experience").setValue(ServerValue.increment(20))
+                    btn_approve.isVisible = false
+                    btn_disapprove.isVisible = false
                 }
             }
         })
@@ -220,6 +281,9 @@ class GalleryFocus : AppCompatActivity() {
                 currentData: DataSnapshot?
             ) {
                 if (committed){
+                    playXPGainAnimation()
+                    val ref = FirebaseDatabase.getInstance().getReference("/users/${current_user?.uid}")
+                    ref.child("experience").setValue(ServerValue.increment(20)) // Gives 20xp for rating an other users prediction
                     btn_approve.isVisible = false
                     btn_disapprove.isVisible = false
                 }

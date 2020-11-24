@@ -1,19 +1,23 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
 import OnSwipeTouchListener
+import android.animation.Animator
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MenuItem
-import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
@@ -27,14 +31,10 @@ import com.arnaudcayrol.WhatIsThatCloud.utils.TabsPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_new_observation.*
+import kotlinx.android.synthetic.main.activity_result.*
 import kotlinx.android.synthetic.main.nav_header.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -52,12 +52,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pictureUri : Uri
     private lateinit var photoFile: File
     private lateinit var photoFile224: File
+    private  lateinit var loading_dialog : AlertDialog
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         // Menu
         if (FirebaseAuth.getInstance().currentUser!!.isAnonymous) {
@@ -73,9 +73,7 @@ class MainActivity : AppCompatActivity() {
 
         nav_view.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.classment ->         {
-                    val ref = FirebaseDatabase.getInstance().getReference("/users/${current_user.uid}")
-                    ref.child("experience").setValue(ServerValue.increment(100))
+                R.id.classment -> {
                 }
                 R.id.about -> Toast.makeText(this, "item2", Toast.LENGTH_SHORT).show()
                 R.id.deconnexion -> {
@@ -135,10 +133,11 @@ class MainActivity : AppCompatActivity() {
         val headerview = nav_view.getHeaderView(0)
         val name_nav_header = headerview.findViewById<TextView>(R.id.name_nav_header)
 
-        val ref = FirebaseDatabase.getInstance().getReference("/users/${current_user.uid}/experience")
+        val ref = FirebaseDatabase.getInstance().getReference("/users/${current_user.uid}")
         ref.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
-                val xp = p0.value as Long
+                name_nav_header.text = p0.child("username").value.toString()
+                val xp = p0.child("experience").value as Long
                 val level = max(log((xp / 100).toDouble()) / log(2.1) + 2, 1.toDouble())
                 nav_header_level.text = "Niveau " + level.toInt().toString()
                 nav_header_progressBar.progress = ((level - level.toInt()) * 100).toInt()
@@ -146,9 +145,13 @@ class MainActivity : AppCompatActivity() {
             override fun onCancelled(p0: DatabaseError) {
             }
         })
-        name_nav_header.text = current_user.displayName.toString()
 
-        // New Observation
+        // Loading icon
+        val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
+        builder.setView(R.layout.loading)
+        loading_dialog = builder.create()
+
+
         CoroutineScope(Job() + Dispatchers.Main ).launch {
             try {
                 API_obj.retrofitService.wakeupServer().await()
@@ -166,13 +169,21 @@ class MainActivity : AppCompatActivity() {
             openGalery()
         }
 
+
     }
+
+//    private fun setDialog(isLoading : Boolean) {
+//
+//        if (isLoading) dialog.show()
+//        else dialog.dismiss()
+//    }
 
     override fun onRestart() {
         layout_new_activity_selector.isVisible = false
         new_observation_button.isVisible = true
         super.onRestart()
     }
+
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -182,6 +193,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun uploadImage() {
+        loading_dialog.show()
+
         CoroutineScope(Job() + Dispatchers.Main ).launch {
 
             // Creating the request to the web server, sending a 224x224 px image
@@ -199,11 +212,14 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("CloudList", cloudList)
                 intent.putExtra("pictureUri", pictureUri)
                 startActivity(intent)
+                loading_dialog.dismiss()
+
 
             } catch (e: Exception) {
                 Toast.makeText(applicationContext, "Failure: ${e.message}.\n" + getString(R.string.bePatient), Toast.LENGTH_LONG).show()
             }
         }
+
     }
 
 
