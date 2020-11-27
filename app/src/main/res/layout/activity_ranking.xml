@@ -4,35 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.GlobalGalleryFragment">
-
+    tools:context=".RankingActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/gexample_grid_layout"
+        android:id="@+id/rank_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/white"
-        android:gravity="center"
-        android:stretchMode="none"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_cloud_name"
-        app:spanCount="2"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_classement"
+        tools:layout_editor_absoluteX="104dp">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
     <TextView
-        android:id="@+id/txt_cloud_name"
+        android:id="@+id/txt_classement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/montserrat"
-        android:text="CUMULUS"
+        android:text="Classement des utilisateurs"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

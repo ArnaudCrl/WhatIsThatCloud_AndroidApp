@@ -1,21 +1,16 @@
 package com.arnaudcayrol.WhatIsThatCloud.utils
 
-import android.content.Context
 import android.util.Log
 import com.arnaudcayrol.WhatIsThatCloud.R
 import com.google.firebase.database.*
-import com.google.gson.annotations.SerializedName
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.galery_cloud_grid_item.view.*
+import kotlinx.android.synthetic.main.gallery_cloud_grid_item.view.*
 import kotlinx.android.synthetic.main.example_cloud_grid_item.view.*
+import kotlinx.android.synthetic.main.ranking_item.view.*
 import kotlinx.android.synthetic.main.result_grid_item.view.*
-import java.sql.Timestamp
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.util.*
+import kotlin.math.ln
 
 class ExampleGridItem(val url : String): Item<ViewHolder>() {
 
@@ -50,7 +45,7 @@ class CloudGridItem(val image_ref : String): Item<ViewHolder>() {
         })
     }
     override fun getLayout(): Int {
-        return R.layout.galery_cloud_grid_item
+        return R.layout.gallery_cloud_grid_item
     }
 }
 
@@ -63,5 +58,33 @@ class ExampleResultItem(private val url : String): Item<ViewHolder>() {
     }
     override fun getLayout(): Int {
         return R.layout.result_grid_item
+    }
+}
+
+class RankingItem(private val username : String, private val xp : String): Item<ViewHolder>() {
+
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        val level = (ln((xp.toInt() / 100).toDouble()) / ln(2.1) + 2).coerceAtLeast(1.0)
+
+        viewHolder.itemView.txt_rank_level.text = level.toInt().toString()
+        viewHolder.itemView.txt_rank_username.text = username
+
+//        Log.d("level", "$username is level ${level}")
+
+        when {
+            level.toInt() == 1 -> {
+                viewHolder.itemView.rank_progress_bar.progress = xp.toInt()
+            }
+            level.toInt() == 2 -> {
+                viewHolder.itemView.rank_progress_bar.progress = (((xp.toDouble() - 100) / 120) * 100).toInt()
+            }
+            else -> {
+                viewHolder.itemView.rank_progress_bar.progress = ((level - level.toInt()) * 100).toInt()
+            }
+        }
+
+    }
+    override fun getLayout(): Int {
+        return R.layout.ranking_item
     }
 }

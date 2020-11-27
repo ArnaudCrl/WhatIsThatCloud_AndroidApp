@@ -24,10 +24,9 @@ import kotlinx.android.synthetic.main.activity_gallery_focus.*
 import kotlinx.android.synthetic.main.activity_gallery_focus.xp_gain_animation
 import kotlinx.android.synthetic.main.activity_gallery_focus.xp_group
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_new_observation.*
 import kotlinx.android.synthetic.main.activity_result.*
-import kotlinx.android.synthetic.main.galery_cloud_grid_item.*
-import kotlinx.android.synthetic.main.galery_cloud_grid_item.view.*
+import kotlinx.android.synthetic.main.gallery_cloud_grid_item.*
+import kotlinx.android.synthetic.main.gallery_cloud_grid_item.view.*
 
 class GalleryFocus : AppCompatActivity() {
 
@@ -256,7 +255,7 @@ class GalleryFocus : AppCompatActivity() {
                         }
                     })
                     playXPGainAnimation()
-                    val current_user_ref = FirebaseDatabase.getInstance().getReference("/users/${current_user?.uid}")
+                    val current_user_ref = FirebaseDatabase.getInstance().getReference("/users/${current_user.uid}")
                     current_user_ref.child("experience").setValue(ServerValue.increment(20))
                     btn_approve.isVisible = false
                     btn_disapprove.isVisible = false
@@ -282,7 +281,7 @@ class GalleryFocus : AppCompatActivity() {
             ) {
                 if (committed){
                     playXPGainAnimation()
-                    val ref = FirebaseDatabase.getInstance().getReference("/users/${current_user?.uid}")
+                    val ref = FirebaseDatabase.getInstance().getReference("/users/${current_user.uid}")
                     ref.child("experience").setValue(ServerValue.increment(20)) // Gives 20xp for rating an other users prediction
                     btn_approve.isVisible = false
                     btn_disapprove.isVisible = false

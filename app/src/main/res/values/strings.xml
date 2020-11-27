@@ -10,7 +10,7 @@
     <string name="ThankYouForYourFeedback">Thank you for your feedback</string>
     <string name="No">NO</string>
     <string name="take_picture">TAKE PICTURE</string>
-    <string name="OpenGalery">OPEN GALERY</string>
+    <string name="OpenGallery">OPEN GALERY</string>
     <string name="what_is_it">IDENTIFICATION</string>
     <string name="confidence">confidence</string>
     <string name="wikiAltocumulus">https://en.wikipedia.org/wiki/Altocumulus_cloud</string>
@@ -28,8 +28,7 @@
     <string name="fb_login_protocol_scheme">fb834475974015022</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 
 </resources>

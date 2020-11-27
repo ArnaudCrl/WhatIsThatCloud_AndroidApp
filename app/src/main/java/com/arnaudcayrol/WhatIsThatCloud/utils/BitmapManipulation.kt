@@ -19,6 +19,30 @@ import java.io.FileOutputStream
 object BitmapManipulation {
 
 
+    fun resizeTo224(context: Context, selectedPhotoUri: Uri): File {
+        val bitmap =
+            if (Build.VERSION.SDK_INT < 28) {
+                MediaStore.Images.Media.getBitmap(context.contentResolver, selectedPhotoUri)
+            } else {
+                val source = ImageDecoder.createSource(context.contentResolver, selectedPhotoUri)
+                ImageDecoder.decodeBitmap(source)
+            }
+        val bitmap224 = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
+        return FileManipluation.saveBitmapToJPG(context, bitmap224)
+    }
+
+    fun resizeTo1080p(context: Context, selectedPhotoUri: Uri): File {
+        val bitmap =
+            if (Build.VERSION.SDK_INT < 28) {
+                MediaStore.Images.Media.getBitmap(context.contentResolver, selectedPhotoUri)
+            } else {
+                val source = ImageDecoder.createSource(context.contentResolver, selectedPhotoUri)
+                ImageDecoder.decodeBitmap(source)
+            }
+        val bitmap1080p = resizeBitmapTo1080p(bitmap)
+        return FileManipluation.saveBitmapToJPG(context, bitmap1080p)
+    }
+
     fun bitmapSquareCrop(bitmap : Bitmap): Bitmap? {
         if (bitmap.width >= bitmap.height){
 
@@ -89,9 +113,9 @@ object BitmapManipulation {
     }
 
 
-    fun resizeTo1024px(bitmap: Bitmap): Bitmap {
-        val maxHeight = 1024
-        val maxWidth = 1024
+    fun resizeBitmapTo1080p(bitmap: Bitmap): Bitmap {
+        val maxHeight = 1920
+        val maxWidth = 1920
         val scale = Math.min(
             maxHeight.toFloat() / bitmap.width,
             maxWidth.toFloat() / bitmap.height
@@ -105,17 +129,7 @@ object BitmapManipulation {
     }
 
 
-    fun resizeTo224(context: Context, selectedPhotoUri: Uri): File {
-        val bitmap =
-            if (Build.VERSION.SDK_INT < 28) {
-                MediaStore.Images.Media.getBitmap(context.contentResolver, selectedPhotoUri)
-            } else {
-                val source = ImageDecoder.createSource(context.contentResolver, selectedPhotoUri)
-                ImageDecoder.decodeBitmap(source)
-            }
-        val bitmap224 = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
-        return FileManipluation.saveBitmapToJPG(context, bitmap224)
-    }
+
 
 
 }

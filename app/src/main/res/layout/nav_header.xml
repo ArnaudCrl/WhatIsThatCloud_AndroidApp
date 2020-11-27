@@ -4,21 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:background="@color/sky_blue">
-
-    <TextView
-        android:id="@+id/name_nav_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:elevation="10dp"
-        android:text="name"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/nav_header_img" />
+    android:background="@color/sky_blue"
+    android:backgroundTint="@color/blue_green">
 
     <ImageView
         android:id="@+id/nav_header_img"
@@ -29,9 +16,24 @@
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/menu_header_pic" />
+
+    <TextView
+        android:id="@+id/name_nav_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:elevation="10dp"
+        android:fontFamily="@font/montserrat"
+        android:text="name"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/nav_menu_image" />
+        app:layout_constraintTop_toTopOf="@+id/nav_header_img" />
 
     <TextView
         android:id="@+id/nav_header_level"
@@ -39,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
+        android:fontFamily="@font/montserrat"
         android:text="Niveau 8"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/nav_header_img"
@@ -51,6 +54,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="24dp"
+        android:max="100"
+        android:progressTint="@color/purple"
         app:layout_constraintBottom_toBottomOf="@+id/nav_header_level"
         app:layout_constraintEnd_toEndOf="@+id/nav_header_img"
         app:layout_constraintStart_toEndOf="@+id/nav_header_level"

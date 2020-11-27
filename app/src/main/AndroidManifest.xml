@@ -14,7 +14,8 @@
         android:roundIcon="@drawable/whatisthatcloudicon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!-- Activities -->
+        <activity android:name=".UserGuideActivity"></activity>
+        <activity android:name=".RankingActivity" /> <!-- Activities -->
         <activity android:name=".MainActivity" />
         <activity android:name=".GalleryFocus">
             <meta-data
@@ -24,21 +25,20 @@
         <activity android:name=".registration.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".ResultActivity" />
         <activity android:name=".CloudExampleGrid">
-<!--            <meta-data-->
-<!--                android:name="android.support.PARENT_ACTIVITY"-->
-<!--                android:value=".GalleryFocus" />-->
-        </activity>
 
+            <!-- <meta-data -->
+            <!-- android:name="android.support.PARENT_ACTIVITY" -->
+            <!-- android:value=".GalleryFocus" /> -->
+        </activity>
         <activity
             android:name=".registration.LoginActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-        <!-- Providers -->
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" /> <!-- Providers -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.arnaudcayrol.WhatIsThatCloud.fileprovider"

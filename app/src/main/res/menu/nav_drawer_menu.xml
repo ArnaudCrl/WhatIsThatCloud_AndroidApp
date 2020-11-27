@@ -6,14 +6,28 @@
         android:title="Classement" />
 
     <item
-        android:id="@+id/about"
-        android:title="A propos" />
-    <group android:id="@+id/grouptohide">
+        android:id="@+id/user_guide"
+        android:title="Guide d'utilisateur" />
+
+    <item
+        android:id="@+id/show_tuto"
+        android:title="Afficher les tutorials" />
+
+    <group android:id="@+id/acount_managment">
+
+        <item
+            android:id="@+id/change_name"
+            android:title="Changer de nom d'utilisateur" />
         <item
             android:id="@+id/deconnexion"
             android:title="Se déconnecter" />
         <item
             android:id="@+id/connexion"
             android:title="Se connecter" />
+        <item
+            android:id="@+id/delete_account"
+            android:title="Supprimer mon compte" />
+
+
     </group>
 </menu>

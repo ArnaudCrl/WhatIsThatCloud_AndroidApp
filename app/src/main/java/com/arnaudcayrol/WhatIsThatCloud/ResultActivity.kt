@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
+import com.arnaudcayrol.WhatIsThatCloud.utils.BitmapManipulation.resizeTo1080p
 import com.arnaudcayrol.WhatIsThatCloud.utils.ColorUtils
 import com.arnaudcayrol.WhatIsThatCloud.utils.ExampleResultItem
 import com.arnaudcayrol.WhatIsThatCloud.utils.UserPicture
@@ -74,9 +75,9 @@ class ResultActivity : AppCompatActivity() {
                     .outerCircleColor(R.color.blue_green)      // Specify a color for the outer circle
                     .outerCircleAlpha(0.90f)            // Specify the alpha amount for the outer circle
                     .targetCircleColor(R.color.white)   // Specify a color for the target circle
-                    .titleTextSize(30)                  // Specify the size (in sp) of the title text
+                    .titleTextSize(20)                  // Specify the size (in sp) of the title text
                     .titleTextColor(R.color.white)      // Specify the color of the title text
-                    .descriptionTextSize(20)            // Specify the size (in sp) of the description text
+                    .descriptionTextSize(15)            // Specify the size (in sp) of the description text
                     .descriptionTextColor(R.color.white)  // Specify the color of the description text
                     .transparentTarget(false)
                     .targetRadius(120),
@@ -85,20 +86,18 @@ class ResultActivity : AppCompatActivity() {
                     .outerCircleColor(R.color.blue_green)      // Specify a color for the outer circle
                     .outerCircleAlpha(0.90f)            // Specify the alpha amount for the outer circle
                     .targetCircleColor(R.color.sky_blue)   // Specify a color for the target circle
-                    .titleTextSize(30)                  // Specify the size (in sp) of the title text
+                    .titleTextSize(20)                  // Specify the size (in sp) of the title text
                     .titleTextColor(R.color.white)      // Specify the color of the title text
-                    .descriptionTextSize(20)            // Specify the size (in sp) of the description text
+                    .descriptionTextSize(15)            // Specify the size (in sp) of the description text
                     .descriptionTextColor(R.color.white)  // Specify the color of the description text
                     .transparentTarget(true))
 
             .continueOnCancel(true)
 
             .listener(object : TapTargetSequence.Listener {
-                override fun onSequenceCanceled(lastTarget: TapTarget?) {}
-                override fun onSequenceStep(lastTarget: TapTarget?, targetClicked: Boolean) {}
-                override fun onSequenceFinish() {
-                    // TODO something
-                }
+                override fun onSequenceCanceled(lastTarget: TapTarget?) { }
+                override fun onSequenceStep(lastTarget: TapTarget?, targetClicked: Boolean) { }
+                override fun onSequenceFinish() { }
             })
 
         if (first_start){
@@ -144,7 +143,7 @@ class ResultActivity : AppCompatActivity() {
         FirebaseStorage.getInstance().getReference("examples/${cloud_type.toLowerCase(Locale.ROOT)}")
             .listAll()
             .addOnSuccessListener { (items, prefixes) ->
-                prefixes.forEach { prefix ->
+                prefixes.forEach { _ ->
                 }
 
                 items.forEach { item ->
@@ -230,19 +229,19 @@ class ResultActivity : AppCompatActivity() {
         val filename = UUID.randomUUID().toString()
         val storageRef = FirebaseStorage.getInstance().getReference("/images/$filename")
 
-        storageRef.putFile(pictureUri)
+        storageRef.putFile(Uri.fromFile(resizeTo1080p(this, pictureUri)))
             .addOnSuccessListener {
                 Log.d("firebaseDatabase", "Successfully uploaded image: ${it.metadata?.path}")
                 storageRef.downloadUrl.addOnSuccessListener {
 
                     // Add to Firebase Database
-                    val username = if (user!!.isAnonymous) "Anonymous" else user?.displayName.toString()
+                    val username = if (user!!.isAnonymous) "Anonymous" else user.displayName.toString()
 
-                    val databaseRef = FirebaseDatabase.getInstance().getReference("/users/${user?.uid}/pictures/$filename")
-                    val userPicture = UserPicture(user?.uid.toString(), it.toString(), username, cloudList.resultList[pageNumber].first)
+                    val databaseRef = FirebaseDatabase.getInstance().getReference("/users/${user.uid}/pictures/$filename")
+                    val userPicture = UserPicture(user.uid.toString(), it.toString(), username, cloudList.resultList[pageNumber].first)
                     databaseRef.setValue(userPicture)
                         .addOnSuccessListener {
-                            val ref = FirebaseDatabase.getInstance().getReference("/users/${user?.uid}")
+                            val ref = FirebaseDatabase.getInstance().getReference("/users/${user.uid}")
                             ref.child("experience").setValue(ServerValue.increment(100)) // Gives 100 xp to user for submitting an image
                             playXPGainAnimation()
                             Log.d("firebaseDatabase", "Successfully added image to database")
@@ -288,18 +287,6 @@ class ResultActivity : AppCompatActivity() {
     }
 
 }
-
-//class CloudItem(val cloudType : String, val cloudIndex : Int, val context: Context): Item<ViewHolder>() {
-//    override fun bind(viewHolder: ViewHolder, position: Int) {
-//        val name = (cloudType + "_" + cloudIndex).toLowerCase(Locale.ROOT)
-//        val id: Int = context.resources.getIdentifier(name, "drawable", context.packageName)
-//        Picasso.get().load(id).into(viewHolder.itemView.cloud_image)
-//    }
-//
-//    override fun getLayout(): Int {
-//        return R.layout.example_cloud_list_item
-//    }
-//}
 
 
 

@@ -6,56 +6,62 @@
     android:layout_height="match_parent"
     android:background="@android:color/holo_green_light">
 
-    <com.google.android.gms.common.SignInButton
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/login_bg" />
+
+    <Button
         android:id="@+id/google_sign_in_button"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="@+id/facebook_login_button_login"
-        app:layout_constraintStart_toStartOf="@+id/facebook_login_button_login"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/facebook_login_button_login"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
+        android:background="#A6B1B1B1"
+        android:textSize="18sp"
+        android:fontFamily="@font/montserrat"
+        android:text="Se connecter avec Google"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/facebook_login_button_login"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/google_sign_in_button" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <Button
+        android:id="@+id/facebook_login_button_login"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/montserrat"
+        android:background="#A6B1B1B1"
+        android:textSize="18sp"
+        android:text="Se connecter avec Facebook"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/anonymous_login_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <Button
         android:id="@+id/anonymous_login_button"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:text="Continue whithout loging in"
-        app:layout_constraintEnd_toEndOf="@+id/facebook_login_button_login"
-        app:layout_constraintStart_toStartOf="@+id/facebook_login_button_login"
-        app:layout_constraintTop_toBottomOf="@+id/facebook_login_button_login" />
-
-
-
-
-    <!--    <Button-->
-<!--        android:id="@+id/login_button_login"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:text="Login"-->
-<!--        android:background="@drawable/rounded_button"-->
-<!--        android:textColor="@android:color/white"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/password_edittext_login"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/password_edittext_login"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/password_edittext_login" />-->
-
-
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="#A6B1B1B1"
+        android:textSize="18sp"
+        android:fontFamily="@font/montserrat"
+        android:text="Continuer sans se connecter"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

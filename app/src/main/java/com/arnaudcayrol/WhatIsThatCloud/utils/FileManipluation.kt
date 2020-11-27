@@ -23,7 +23,7 @@ object FileManipluation {
 
     fun saveBitmapToJPG(context: Context, bitmap: Bitmap): File {
         val bytes = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes)
         val storageDirectory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val f =  File.createTempFile("tempfile224", ".jpg", storageDirectory)
         val fo = FileOutputStream(f)

@@ -23,7 +23,7 @@ class CloudExampleGrid : AppCompatActivity() {
         setContentView(R.layout.activity_cloud_example_grid)
 
         cloud = (intent.getSerializableExtra("cloud_type") as String)
-        Log.d("examples", cloud)
+//        Log.d("examples", cloud)
         txt_cloud_name.text = cloud.toUpperCase()
 
         FirebaseStorage.getInstance().getReference("examples/$cloud").listAll()
@@ -32,7 +32,7 @@ class CloudExampleGrid : AppCompatActivity() {
                 }
 
                 items.forEach { item ->
-                    Log.d("examples", "working")
+//                    Log.d("examples", "working")
 
                     item.downloadUrl.addOnSuccessListener {
                         adapter.add(ExampleGridItem(it.toString()))

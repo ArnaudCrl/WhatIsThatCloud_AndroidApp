@@ -18,13 +18,14 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/ic_baseline_add_circle_80"
+            android:background="@drawable/ic_twotone_control_point_24"
             android:backgroundTint="@color/sky_blue"
             android:elevation="10dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="invisible" />
+            tools:visibility="visible" />
 
 
         <com.google.android.material.tabs.TabLayout
@@ -56,6 +57,7 @@
             android:layout_height="170dp"
             android:background="@drawable/top_border"
 
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent">
 
 
@@ -86,6 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserrat"
                 android:text="Prendre une photo"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/btn_camera"
@@ -97,6 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserrat"
                 android:text="Choisir une image"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/btn_gallery"
@@ -130,8 +134,6 @@
         android:fitsSystemWindows="true" >
 
     </com.google.android.material.navigation.NavigationView>
-
-
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

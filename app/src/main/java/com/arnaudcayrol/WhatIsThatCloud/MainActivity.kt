@@ -1,19 +1,21 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
 import OnSwipeTouchListener
-import android.animation.Animator
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MenuItem
-import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.EditText
 import android.widget.ProgressBar
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -22,6 +24,8 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import androidx.core.view.isVisible
+import com.arnaudcayrol.WhatIsThatCloud.ChangeUsername.changeUsername
+import com.arnaudcayrol.WhatIsThatCloud.ChangeUsername.isValidUsername
 import com.arnaudcayrol.WhatIsThatCloud.network.API_obj
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
 import com.arnaudcayrol.WhatIsThatCloud.registration.LoginActivity
@@ -30,23 +34,27 @@ import com.arnaudcayrol.WhatIsThatCloud.utils.FileManipluation
 import com.arnaudcayrol.WhatIsThatCloud.utils.TabsPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_result.*
-import kotlinx.android.synthetic.main.nav_header.*
-import kotlinx.coroutines.*
+import kotlinx.android.synthetic.main.ranking_item.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 import java.lang.Math.log
 import java.lang.Math.max
+import kotlin.math.ln
 
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var toggle: ActionBarDrawerToggle // For menu
-    val current_user = FirebaseAuth.getInstance().currentUser!!
+    private lateinit var current_user : FirebaseUser
     private val REQUEST_CODE_TAKE_PICTURE = 1
     private val REQUEST_CODE_SELECT_PICTURE = 2
     private lateinit var pictureUri : Uri
@@ -59,38 +67,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        current_user = FirebaseAuth.getInstance().currentUser!!
+
+//        SystemClock.sleep(1000)
+
         // Menu
         if (FirebaseAuth.getInstance().currentUser!!.isAnonymous) {
             nav_view.menu.findItem(R.id.deconnexion).isVisible = false
         } else {
             nav_view.menu.findItem(R.id.connexion).isVisible = false
         }
+        nav_view.menu.findItem(R.id.show_tuto).isVisible = false
+
+//        nav_view.menu.findItem(R.id.change_name).isVisible = false
 
         toggle = ActionBarDrawerToggle(this, drawer_layout, R.string.open, R.string.close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        buildMenu()
 
-        nav_view.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.classment -> {
-                }
-                R.id.about -> Toast.makeText(this, "item2", Toast.LENGTH_SHORT).show()
-                R.id.deconnexion -> {
-                    FirebaseAuth.getInstance().signOut()
-                    Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                }
-                R.id.connexion -> {
-                    val intent = Intent(this, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                }
-            }
-            true
-        }
+
 
         // Tabs
         val tabAdapter = TabsPagerAdapter(supportFragmentManager, lifecycle, 2)
@@ -130,24 +127,11 @@ class MainActivity : AppCompatActivity() {
 
 
         // Nav Header
-        val headerview = nav_view.getHeaderView(0)
-        val name_nav_header = headerview.findViewById<TextView>(R.id.name_nav_header)
+        UpdateMenuHeader()
 
-        val ref = FirebaseDatabase.getInstance().getReference("/users/${current_user.uid}")
-        ref.addValueEventListener(object: ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
-                name_nav_header.text = p0.child("username").value.toString()
-                val xp = p0.child("experience").value as Long
-                val level = max(log((xp / 100).toDouble()) / log(2.1) + 2, 1.toDouble())
-                nav_header_level.text = "Niveau " + level.toInt().toString()
-                nav_header_progressBar.progress = ((level - level.toInt()) * 100).toInt()
-            }
-            override fun onCancelled(p0: DatabaseError) {
-            }
-        })
 
         // Loading icon
-        val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setView(R.layout.loading)
         loading_dialog = builder.create()
 
@@ -166,22 +150,87 @@ class MainActivity : AppCompatActivity() {
         }
 
         btn_gallery.setOnClickListener{
-            openGalery()
+            openGallery()
         }
 
 
     }
 
-//    private fun setDialog(isLoading : Boolean) {
-//
-//        if (isLoading) dialog.show()
-//        else dialog.dismiss()
-//    }
 
     override fun onRestart() {
         layout_new_activity_selector.isVisible = false
         new_observation_button.isVisible = true
+        UpdateMenuHeader()
         super.onRestart()
+    }
+
+
+    private fun buildMenu(){
+        nav_view.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.classment -> {
+                    val intent = Intent(applicationContext, RankingActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.user_guide -> {
+                    val intent = Intent(applicationContext, UserGuideActivity::class.java)
+                    startActivity(intent)                }
+                R.id.change_name -> {
+                    changeUsernameDialog()
+                }
+                R.id.deconnexion -> {
+                    ConfirmDeconnexionDialog().show()
+                }
+                R.id.delete_account -> {
+                    ConfirmAccountDeleteDialog().show()
+                }
+                R.id.connexion -> {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                }
+                R.id.show_tuto -> {
+                    val prefs : SharedPreferences = getSharedPreferences("com.arnaudcayrol.WhatIsThatCloud.sharedprefs", Context.MODE_PRIVATE)
+                    prefs.edit().putBoolean("first_start", true).apply()
+                    Toast.makeText(this, "tutoriels activés", Toast.LENGTH_SHORT).show()
+                }
+            }
+            true
+        }
+    }
+
+    private fun changeUsernameDialog(){
+
+        val alert = AlertDialog.Builder(this)
+        alert.setTitle("Changement de nom d'utilisateur")
+        alert.setMessage("\nChoisisez un nouveau nom d'utilisateur, c'est le nom qui apparaîtra sur vos photos dans la gallerie ansi que dans le classement")
+
+        // Set an EditText view to get user input
+        val input = EditText(this)
+        alert.setView(input)
+
+        alert.setPositiveButton("Valider",
+            DialogInterface.OnClickListener { _, _ ->
+                val value = input.text.toString()
+                if (isValidUsername(value)) {
+                    changeUsername(current_user.uid, value)
+                    Toast.makeText(applicationContext, "Votre nom d'utilisateur à bien été changé et apparaitra apres que la page ait été rechargé", Toast.LENGTH_LONG).show()
+
+                    return@OnClickListener
+                } else {
+                    input.setText("")
+                    Toast.makeText(applicationContext, "Erreur : Le nom doit comporter plus de 4 characteres et ne pas commencer par un chiffre", Toast.LENGTH_LONG).show()
+
+                }
+
+            })
+
+        alert.setNegativeButton("Annuler",
+            DialogInterface.OnClickListener { _, _ ->
+                return@OnClickListener
+            })
+        alert.show()
+
     }
 
 
@@ -189,6 +238,39 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item)) return true
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun UpdateMenuHeader(){
+
+        val headerview = nav_view.getHeaderView(0)
+        val name_nav_header = headerview.findViewById<TextView>(R.id.name_nav_header)
+        val nav_header_level = headerview.findViewById<TextView>(R.id.nav_header_level)
+        val nav_header_progressBar = headerview.findViewById<ProgressBar>(R.id.nav_header_progressBar)
+
+        val ref = FirebaseDatabase.getInstance().getReference("/users/${current_user.uid}")
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                name_nav_header.text = p0.child("username").value.toString()
+
+                val xp = p0.child("experience").value as Long
+                val level = (ln((xp / 100).toDouble()) / ln(2.1) + 2).coerceAtLeast(1.0)
+                nav_header_level.text = "Niveau " + level.toInt().toString()
+
+                when {
+                    level.toInt() == 1 -> {
+                        nav_header_progressBar.progress = xp.toInt()
+                    }
+                    level.toInt() == 2 -> {
+                        nav_header_progressBar.progress = (((xp.toDouble() - 100) / 120) * 100).toInt()
+                    }
+                    else -> {
+                        nav_header_progressBar.progress = ((level - level.toInt()) * 100).toInt()
+                    }
+                }
+
+            }
+            override fun onCancelled(p0: DatabaseError) {  }
+        })
     }
 
 
@@ -238,7 +320,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun openGalery() {
+    private fun openGallery() {
         val openGaleryIntent = Intent()
         openGaleryIntent.type = "image/*"
         openGaleryIntent.action = Intent.ACTION_GET_CONTENT
@@ -262,6 +344,69 @@ class MainActivity : AppCompatActivity() {
         }
 
         else super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun ConfirmDeconnexionDialog(): AlertDialog{
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.Confirm))
+        builder.setMessage("Souhaitez vous vraiment vous déconnecter ?")
+
+        builder.setPositiveButton(getString(R.string.Yes))
+        { dialog, _ ->
+            FirebaseAuth.getInstance().signOut()
+            Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra("EXIT", true)    //            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton(getString(R.string.No)
+        ) { dialog, _ -> // Do nothing
+            dialog.dismiss()
+        }
+
+        return builder.create()
+    }
+
+    private fun ConfirmAccountDeleteDialog(): AlertDialog{
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.Confirm))
+        builder.setMessage("Souhaitez vous vraiment supprimer votre compte? Cela entrainera la suppression permanente de toutes vos photos.")
+
+        builder.setPositiveButton(getString(R.string.Yes))
+        { dialog, _ ->
+            finish()
+            val ref = FirebaseDatabase.getInstance().getReference("/users/${FirebaseAuth.getInstance().currentUser!!.uid}")
+            ref.removeValue().addOnSuccessListener {
+                Log.d("delete user", "database entry removed")
+                FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener {
+                    Log.d("delete user", "user deleted")
+
+                    Toast.makeText(this, "Compte Supprimé", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.putExtra("EXIT", true)    //            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    dialog.dismiss()
+                }
+            }
+        }
+
+        builder.setNegativeButton(getString(R.string.No)
+        ) { dialog, _ -> // Do nothing
+            dialog.dismiss()
+        }
+
+        return builder.create()
     }
 
 
