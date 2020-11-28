@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/holo_green_light">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/imageView"
@@ -23,7 +22,7 @@
         android:background="#A6B1B1B1"
         android:textSize="18sp"
         android:fontFamily="@font/montserrat"
-        android:text="Se connecter avec Google"
+        android:text="@string/google_login"
         android:textAllCaps="false"
         app:layout_constraintBottom_toTopOf="@+id/facebook_login_button_login"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +39,7 @@
         android:fontFamily="@font/montserrat"
         android:background="#A6B1B1B1"
         android:textSize="18sp"
-        android:text="Se connecter avec Facebook"
+        android:text="@string/facebook_login"
         android:textAllCaps="false"
         app:layout_constraintBottom_toTopOf="@+id/anonymous_login_button"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +56,7 @@
         android:background="#A6B1B1B1"
         android:textSize="18sp"
         android:fontFamily="@font/montserrat"
-        android:text="Continuer sans se connecter"
+        android:text="@string/anonymous_login"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

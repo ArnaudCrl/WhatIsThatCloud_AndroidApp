@@ -1,10 +1,7 @@
 package com.arnaudcayrol.WhatIsThatCloud.utils
 
-import android.os.Parcelable
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
-import kotlinx.android.parcel.Parcelize
-import java.sql.Timestamp
 
 
 @IgnoreExtraProperties

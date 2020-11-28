@@ -23,12 +23,10 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
 
@@ -78,7 +76,7 @@ class LoginActivity: AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         // Loading icon
-        val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setView(R.layout.loading)
         loading_dialog = builder.create()
 
@@ -121,7 +119,7 @@ class LoginActivity: AppCompatActivity() {
     private fun getFacebookAccessToken(){
 
         LoginManager.getInstance().loginBehavior = LoginBehavior.WEB_VIEW_ONLY
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile","email"))
+        LoginManager.getInstance().logInWithReadPermissions(this, listOf("public_profile","email"))
         LoginManager.getInstance().registerCallback(callbackManager,object :
             FacebookCallback<LoginResult> {
             override fun onSuccess(result: LoginResult?) {

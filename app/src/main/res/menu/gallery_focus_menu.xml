@@ -6,5 +6,5 @@
         android:id="@+id/gallery_focus_delete"
         android:icon="@drawable/ic_baseline_delete_24"
         app:showAsAction="always"
-        android:title="Delete" />
+        android:title="@string/delete" />
 </menu>

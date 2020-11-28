@@ -3,7 +3,6 @@ package com.arnaudcayrol.WhatIsThatCloud.utils
 import android.content.Context
 import android.graphics.Color
 import android.text.Spannable
-import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.widget.TextView
@@ -15,8 +14,8 @@ object ColorUtils {
     private const val SECOND_COLOR: Int = 0xffDAA520.toInt() // ORANGE
     private const val THIRD_COLOR: Int = 0xff32CD32.toInt() // LIME GREEN
 
-    fun getColor(p: Float): Int {
-        var p = p
+    private fun getColor(pp: Float): Int {
+        var p = pp
         val c0: Int
         val c1: Int
         if (p <= 0.5f) {
@@ -43,7 +42,7 @@ object ColorUtils {
     // CLOUD TYPE
     // XX% confidence -> colored text based on percentage
     fun writeColoredResultText(context : Context, textView: TextView, pair: Pair<String, Double>){
-        var confidence = context.getString(R.string.confidence)
+        val confidence = context.getString(R.string.confidence)
         textView.setText("${pair.first}\n" + "${(pair.second * 100).toInt()}% " + confidence, TextView.BufferType.SPANNABLE)
         val span = textView.text as Spannable
         span.setSpan(ForegroundColorSpan(getColor(pair.second.toFloat())), pair.first.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

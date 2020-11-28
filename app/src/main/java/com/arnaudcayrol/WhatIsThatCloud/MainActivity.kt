@@ -10,7 +10,6 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.os.SystemClock
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
@@ -35,9 +34,11 @@ import com.arnaudcayrol.WhatIsThatCloud.utils.TabsPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.ranking_item.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -46,14 +47,12 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
-import java.lang.Math.log
-import java.lang.Math.max
 import kotlin.math.ln
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var toggle: ActionBarDrawerToggle // For menu
+    private lateinit var toggle: ActionBarDrawerToggle // For menu
     private lateinit var current_user : FirebaseUser
     private val REQUEST_CODE_TAKE_PICTURE = 1
     private val REQUEST_CODE_SELECT_PICTURE = 2
@@ -74,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         // Menu
         if (FirebaseAuth.getInstance().currentUser!!.isAnonymous) {
             nav_view.menu.findItem(R.id.deconnexion).isVisible = false
+            nav_view.menu.findItem(R.id.change_name).isVisible = false
         } else {
             nav_view.menu.findItem(R.id.connexion).isVisible = false
         }
@@ -93,14 +93,16 @@ class MainActivity : AppCompatActivity() {
         val tabAdapter = TabsPagerAdapter(supportFragmentManager, lifecycle, 2)
         tabs_viewpager.adapter = tabAdapter
         tabs_viewpager.isUserInputEnabled = true
+        val my_observations = this.getString(R.string.my_observations)
+        val communauty = this.getString(R.string.communauty)
 
         TabLayoutMediator(tab_layout, tabs_viewpager) { tab, position ->
             when (position) {
                 0 -> {
-                    tab.text = "Mes observations"
+                    tab.text = my_observations
                 }
                 1 -> {
-                    tab.text = "Communauté"
+                    tab.text = communauty
                 }
             }
             // Change color of the icons
@@ -113,7 +115,7 @@ class MainActivity : AppCompatActivity() {
 
         // New observation button
         layout_new_activity_selector.isVisible = false
-        new_observation_button.setOnClickListener() {
+        new_observation_button.setOnClickListener {
             layout_new_activity_selector.isVisible = true
             new_observation_button.isVisible = false
         }
@@ -202,30 +204,29 @@ class MainActivity : AppCompatActivity() {
     private fun changeUsernameDialog(){
 
         val alert = AlertDialog.Builder(this)
-        alert.setTitle("Changement de nom d'utilisateur")
-        alert.setMessage("\nChoisisez un nouveau nom d'utilisateur, c'est le nom qui apparaîtra sur vos photos dans la gallerie ansi que dans le classement")
+        alert.setTitle(this.getString(R.string.change_username))
+        alert.setMessage(this.getString(R.string.choose_new_username))
 
         // Set an EditText view to get user input
         val input = EditText(this)
         alert.setView(input)
-
-        alert.setPositiveButton("Valider",
+        alert.setPositiveButton( this.getString(R.string.validate),
             DialogInterface.OnClickListener { _, _ ->
                 val value = input.text.toString()
                 if (isValidUsername(value)) {
                     changeUsername(current_user.uid, value)
-                    Toast.makeText(applicationContext, "Votre nom d'utilisateur à bien été changé et apparaitra apres que la page ait été rechargé", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, this.getString(R.string.username_changed), Toast.LENGTH_LONG).show()
 
                     return@OnClickListener
                 } else {
                     input.setText("")
-                    Toast.makeText(applicationContext, "Erreur : Le nom doit comporter plus de 4 characteres et ne pas commencer par un chiffre", Toast.LENGTH_LONG).show()
+                    Toast.makeText(applicationContext, this.getString(R.string.wrong_username), Toast.LENGTH_LONG).show()
 
                 }
 
             })
 
-        alert.setNegativeButton("Annuler",
+        alert.setNegativeButton(this.getString(R.string.cancel),
             DialogInterface.OnClickListener { _, _ ->
                 return@OnClickListener
             })
@@ -254,7 +255,8 @@ class MainActivity : AppCompatActivity() {
 
                 val xp = p0.child("experience").value as Long
                 val level = (ln((xp / 100).toDouble()) / ln(2.1) + 2).coerceAtLeast(1.0)
-                nav_header_level.text = "Niveau " + level.toInt().toString()
+                val level_string = this@MainActivity.getString(R.string.level)
+                nav_header_level.text = level_string + level.toInt().toString()
 
                 when {
                     level.toInt() == 1 -> {
@@ -350,12 +352,11 @@ class MainActivity : AppCompatActivity() {
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.Confirm))
-        builder.setMessage("Souhaitez vous vraiment vous déconnecter ?")
-
+        builder.setMessage(this.getString(R.string.wish_to_disconnect))
         builder.setPositiveButton(getString(R.string.Yes))
         { dialog, _ ->
             FirebaseAuth.getInstance().signOut()
-            Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, this.getString(R.string.signed_out), Toast.LENGTH_SHORT).show()
             val intent = Intent(this, LoginActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -378,7 +379,7 @@ class MainActivity : AppCompatActivity() {
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.Confirm))
-        builder.setMessage("Souhaitez vous vraiment supprimer votre compte? Cela entrainera la suppression permanente de toutes vos photos.")
+        builder.setMessage(this.getString(R.string.confirm_delete_account))
 
         builder.setPositiveButton(getString(R.string.Yes))
         { dialog, _ ->
@@ -388,8 +389,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d("delete user", "database entry removed")
                 FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener {
                     Log.d("delete user", "user deleted")
-
-                    Toast.makeText(this, "Compte Supprimé", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.getString(R.string.account_deleted), Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

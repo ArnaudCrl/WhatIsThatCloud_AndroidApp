@@ -138,7 +138,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/montserrat"
-        android:text="Voir des exemples"
+        android:text="@string/see_examples"
         android:textAlignment="center"
         android:textColor="@color/dark_blue"
         android:textStyle="italic"

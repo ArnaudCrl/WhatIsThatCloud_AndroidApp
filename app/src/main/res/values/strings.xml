@@ -24,11 +24,49 @@
     <string name="wikiStratocumulus">https://en.wikipedia.org/wiki/Stratocumulus_cloud</string>
     <string name="wikiStratus">https://en.wikipedia.org/wiki/Stratus_cloud</string>
     <string name="bePatient">Server is waking up, this takes about 30 seconds the first time</string>
-    <string name="facebook_app_id">834475974015022</string>
-    <string name="fb_login_protocol_scheme">fb834475974015022</string>
+    <string name="facebook_app_id" translatable="false">834475974015022</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb834475974015022</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-
+    <string name="anonymous_login">Continue without logging in</string>
+    <string name="take_pic">Take a picture</string>
+    <string name="choose_pic">Choose a picture</string>
+    <string name="user_ranking">User ranking</string>
+    <string name="user_guide">User guide</string>
+    <string name="tuto_photo">In order to get the best possible identification, try to take pictures only of the sky. Avoid as much as possible external elements in the photo (buildings, trees, posts etc...). Do not hesitate to zoom in to remove these disturbing elements.</string>
+    <string name="comment_prendre_une_photo">How to take a good picture</string>
+    <string name="comment_gagner_de_l_experience">How to gain experience</string>
+    <string name="tuto_experience">You can gain experience in two ways:  The first is simply taking a picture of a cloud and validating a name.  The second way is to validate or invalidate a cloud name chosen by another user. To do this go to the community tab and click on the picture of another user. If you agree with his choice, you both gain experience, if you think the other user is wrong, only you gain experience. If you are not sure, refer to the examples by clicking on \"see examples\".</string>
+    <string name="welcome">Welcome! To get started, make your first observation by clicking on the button below :</string>
+    <string name="delete">Delete</string>
+    <string name="loading">Loading...</string>
+    <string name="classement">Ranking</string>
+    <string name="guide_d_utilisateur">User guide</string>
+    <string name="afficher_les_tutorials">Display tutorials</string>
+    <string name="changer_de_nom_d_utilisateur">Change username</string>
+    <string name="se_d_connecter">Log out</string>
+    <string name="se_connecter">Log in</string>
+    <string name="supprimer_mon_compte">Delete my account</string>
+    <string name="google_login">Log in with Google</string>
+    <string name="facebook_login">Log in with Facebook</string>
+    <string name="vous_pensez">"You think that it is a "</string>
+    <string name="xxx_pense_que">" thiks that it is a "</string>
+    <string name="level">"Level "</string>
+    <string name="see_examples">See examples</string>
+    <string name="communauty" >Communauty</string>
+    <string name="my_observations">My observations</string>
+    <string name="change_username">Change username</string>
+    <string name="choose_new_username">Choose a nex username. It will appear on your photos and in the user ranking.</string>
+    <string name="validate">Confirm</string>
+    <string name="username_changed">Your username has been successfuly changed. It will apear once the page is reloaded</string>
+    <string name="wrong_username">Warning: username must be longer than 4 characters and must start with a letter.</string>
+    <string name="cancel">Cancel</string>
+    <string name="wish_to_disconnect">Do you really wish to log out?</string>
+    <string name="signed_out">Signed out</string>
+    <string name="confirm_delete_account">Do you really wish to permanently delete your account? All your pictures will be forever deleted.</string>
+    <string name="account_deleted">Account deleted, good by!</string>
+    <string name="confirm_delete_pic">Do you really wish to delete this picture from the database?</string>
+    <string name="image_deleted">Image deleted</string>
 
 
 </resources>

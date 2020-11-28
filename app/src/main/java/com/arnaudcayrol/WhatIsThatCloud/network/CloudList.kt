@@ -1,6 +1,5 @@
 package com.arnaudcayrol.WhatIsThatCloud.network
 
-import com.arnaudcayrol.WhatIsThatCloud.R
 import java.io.Serializable
 
 class CloudList  (

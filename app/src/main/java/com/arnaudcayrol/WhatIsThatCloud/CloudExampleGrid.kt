@@ -1,11 +1,8 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import com.arnaudcayrol.WhatIsThatCloud.utils.ExampleGridItem
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.component1
 import com.google.firebase.storage.ktx.component2
@@ -28,8 +25,7 @@ class CloudExampleGrid : AppCompatActivity() {
 
         FirebaseStorage.getInstance().getReference("examples/$cloud").listAll()
             .addOnSuccessListener { (items, prefixes) ->
-                prefixes.forEach { prefix ->
-                }
+                prefixes.forEach { _ -> }
 
                 items.forEach { item ->
 //                    Log.d("examples", "working")

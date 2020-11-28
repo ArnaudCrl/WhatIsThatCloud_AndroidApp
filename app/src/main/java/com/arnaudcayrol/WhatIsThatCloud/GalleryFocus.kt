@@ -2,31 +2,21 @@ package com.arnaudcayrol.WhatIsThatCloud
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
-import com.arnaudcayrol.WhatIsThatCloud.utils.ExampleGridItem
 import com.arnaudcayrol.WhatIsThatCloud.utils.UserPicture
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_gallery_focus.*
-import kotlinx.android.synthetic.main.activity_gallery_focus.xp_gain_animation
-import kotlinx.android.synthetic.main.activity_gallery_focus.xp_group
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_result.*
-import kotlinx.android.synthetic.main.gallery_cloud_grid_item.*
-import kotlinx.android.synthetic.main.gallery_cloud_grid_item.view.*
 
 class GalleryFocus : AppCompatActivity() {
 
@@ -66,11 +56,13 @@ class GalleryFocus : AppCompatActivity() {
                 }
 
                 if (current_user.uid == user_picture.uid){
-                    txt_username_prediction.text = "Vous pensez qu'il s'agit d'un " + user_picture.prediction.toString()
+                    val vous_pensez = this@GalleryFocus.getString(R.string.vous_pensez)
+                    txt_username_prediction.text = vous_pensez + user_picture.prediction.toString()
                     user_is_author = true
                     invalidateOptionsMenu()
                 } else {
-                    txt_username_prediction.text = user_picture.author.toString() + " pense qu'il s'agit d'un " + user_picture.prediction.toString()
+                    val xxx_pense_que = this@GalleryFocus.getString(R.string.xxx_pense_que)
+                    txt_username_prediction.text = user_picture.author.toString() + xxx_pense_que + user_picture.prediction.toString()
                 }
 
 
@@ -85,23 +77,23 @@ class GalleryFocus : AppCompatActivity() {
 
         xp_group.isVisible = false
 
-        txt_see_examples.setOnClickListener(){
+        txt_see_examples.setOnClickListener {
             startExampleGridActivity()
         }
 
-        gallery_focus_heart.setOnClickListener(){
+        gallery_focus_heart.setOnClickListener {
             onHeartClicked(ref)
         }
 
-        btn_approve.setOnClickListener(){
+        btn_approve.setOnClickListener {
             onAgreeClicked(ref)
         }
-        btn_disapprove.setOnClickListener(){
+        btn_disapprove.setOnClickListener {
             onDisagreeClicked(ref)
         }
     }
 
-    fun startExampleGridActivity(){
+    private fun startExampleGridActivity(){
 
         val ref = FirebaseDatabase.getInstance().getReferenceFromUrl(image_ref + "/prediction")
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
@@ -147,13 +139,13 @@ class GalleryFocus : AppCompatActivity() {
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.Confirm))
-        builder.setMessage("Souhaitez-vous vraiment supprimer cette image de la base de donnée ?")
+        builder.setMessage(getString(R.string.confirm_delete_pic))
 
         builder.setPositiveButton(getString(R.string.Yes))
         { dialog, _ ->
-            FirebaseDatabase.getInstance().getReferenceFromUrl(image_ref).removeValue().addOnCompleteListener() {
+            FirebaseDatabase.getInstance().getReferenceFromUrl(image_ref).removeValue().addOnCompleteListener {
                 if(it.isSuccessful){
-                    Toast.makeText(this, "Images supprimée", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.image_deleted), Toast.LENGTH_SHORT).show()
                     onBackPressed()
                 }
             }
@@ -182,7 +174,7 @@ class GalleryFocus : AppCompatActivity() {
             scaleX(1.5f)
             scaleY(1.5f)
             interpolator = AccelerateDecelerateInterpolator()
-        }.withStartAction() {
+        }.withStartAction {
             xp_gain_animation.playAnimation()
         }.withEndAction {
             xp_group.isVisible = false

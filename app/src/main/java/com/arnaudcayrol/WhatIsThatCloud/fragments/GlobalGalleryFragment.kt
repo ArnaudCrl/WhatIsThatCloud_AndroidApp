@@ -1,30 +1,21 @@
 package com.arnaudcayrol.WhatIsThatCloud.fragments
 
-import OnSwipeTouchListener
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat.invalidateOptionsMenu
-import androidx.core.view.isVisible
-import com.arnaudcayrol.WhatIsThatCloud.utils.CloudGridItem
+import androidx.fragment.app.Fragment
 import com.arnaudcayrol.WhatIsThatCloud.GalleryFocus
 import com.arnaudcayrol.WhatIsThatCloud.R
+import com.arnaudcayrol.WhatIsThatCloud.utils.CloudGridItem
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_global_gallery.*
-import kotlinx.android.synthetic.main.fragment_my_gallery.*
 
 
 class GlobalGalleryFragment : Fragment(R.layout.fragment_global_gallery) {
@@ -37,7 +28,7 @@ class GlobalGalleryFragment : Fragment(R.layout.fragment_global_gallery) {
         updateGallery()
         super.onViewCreated(view, savedInstanceState)
 
-        adapter.setOnItemClickListener { item, view ->
+        adapter.setOnItemClickListener { item, _ ->
 
             val extra = item as CloudGridItem
             val item_ref = extra.ref

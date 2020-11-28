@@ -3,30 +3,30 @@
 
     <item
         android:id="@+id/classment"
-        android:title="Classement" />
+        android:title="@string/classement" />
 
     <item
         android:id="@+id/user_guide"
-        android:title="Guide d'utilisateur" />
+        android:title="@string/guide_d_utilisateur" />
 
     <item
         android:id="@+id/show_tuto"
-        android:title="Afficher les tutorials" />
+        android:title="@string/afficher_les_tutorials" />
 
     <group android:id="@+id/acount_managment">
 
         <item
             android:id="@+id/change_name"
-            android:title="Changer de nom d'utilisateur" />
+            android:title="@string/changer_de_nom_d_utilisateur" />
         <item
             android:id="@+id/deconnexion"
-            android:title="Se déconnecter" />
+            android:title="@string/se_d_connecter" />
         <item
             android:id="@+id/connexion"
-            android:title="Se connecter" />
+            android:title="@string/se_connecter" />
         <item
             android:id="@+id/delete_account"
-            android:title="Supprimer mon compte" />
+            android:title="@string/supprimer_mon_compte" />
 
 
     </group>

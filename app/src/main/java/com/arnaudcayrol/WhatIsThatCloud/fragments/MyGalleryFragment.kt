@@ -1,6 +1,5 @@
 package com.arnaudcayrol.WhatIsThatCloud.fragments
 
-import android.R.attr.name
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +10,6 @@ import androidx.fragment.app.Fragment
 import com.arnaudcayrol.WhatIsThatCloud.GalleryFocus
 import com.arnaudcayrol.WhatIsThatCloud.R
 import com.arnaudcayrol.WhatIsThatCloud.utils.CloudGridItem
-import com.arnaudcayrol.WhatIsThatCloud.utils.UserPicture
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -19,7 +17,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.fragment_global_gallery.*
 import kotlinx.android.synthetic.main.fragment_my_gallery.*
 
 
@@ -35,7 +32,7 @@ class MyGalleryFragment : Fragment(R.layout.fragment_my_gallery) {
         txt_no_observation_in_gallery.isVisible = false
         updateGallery()
 
-        adapter.setOnItemClickListener { item, view ->
+        adapter.setOnItemClickListener { item, _ ->
 
             val extra = item as CloudGridItem
             val item_ref = extra.ref

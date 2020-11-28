@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.ranking_item.view.*
 import kotlinx.android.synthetic.main.result_grid_item.view.*
 import kotlin.math.ln
 
-class ExampleGridItem(val url : String): Item<ViewHolder>() {
+class ExampleGridItem(private val url : String): Item<ViewHolder>() {
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
@@ -26,7 +26,7 @@ class ExampleGridItem(val url : String): Item<ViewHolder>() {
 
 class CloudGridItem(val image_ref : String): Item<ViewHolder>() {
 
-    public val ref = FirebaseDatabase.getInstance().getReferenceFromUrl(image_ref)
+    val ref = FirebaseDatabase.getInstance().getReferenceFromUrl(image_ref)
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
 

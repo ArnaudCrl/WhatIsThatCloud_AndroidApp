@@ -1,6 +1,5 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
-import android.animation.Animator
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -232,13 +231,13 @@ class ResultActivity : AppCompatActivity() {
         storageRef.putFile(Uri.fromFile(resizeTo1080p(this, pictureUri)))
             .addOnSuccessListener {
                 Log.d("firebaseDatabase", "Successfully uploaded image: ${it.metadata?.path}")
-                storageRef.downloadUrl.addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener {url ->
 
                     // Add to Firebase Database
                     val username = if (user!!.isAnonymous) "Anonymous" else user.displayName.toString()
 
                     val databaseRef = FirebaseDatabase.getInstance().getReference("/users/${user.uid}/pictures/$filename")
-                    val userPicture = UserPicture(user.uid.toString(), it.toString(), username, cloudList.resultList[pageNumber].first)
+                    val userPicture = UserPicture(user.uid, url.toString(), username, cloudList.resultList[pageNumber].first)
                     databaseRef.setValue(userPicture)
                         .addOnSuccessListener {
                             val ref = FirebaseDatabase.getInstance().getReference("/users/${user.uid}")
@@ -246,8 +245,8 @@ class ResultActivity : AppCompatActivity() {
                             playXPGainAnimation()
                             Log.d("firebaseDatabase", "Successfully added image to database")
                         }
-                        .addOnFailureListener {
-                            Log.d("firebaseDatabase", "Failed to set value to database: ${it.message}")
+                        .addOnFailureListener {exception ->
+                            Log.d("firebaseDatabase", "Failed to set value to database: ${exception.message}")
                         }
                 }
             }
@@ -258,14 +257,14 @@ class ResultActivity : AppCompatActivity() {
 
 
 
-    fun GoToURL(url: String?) {
+    private fun GoToURL(url: String?) {
         val uri: Uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivity(intent)
     }
 
 
-    fun playXPGainAnimation(){
+    private fun playXPGainAnimation(){
         xp_group.isVisible = true // reset view position
         xp_group.translationY = 0f
         xp_group.alpha = 1f
@@ -278,7 +277,7 @@ class ResultActivity : AppCompatActivity() {
             scaleX(1.5f)
             scaleY(1.5f)
             interpolator = AccelerateDecelerateInterpolator()
-        }.withStartAction() {
+        }.withStartAction {
             xp_gain_animation.playAnimation()
         }.withEndAction {
             xp_group.isVisible = false

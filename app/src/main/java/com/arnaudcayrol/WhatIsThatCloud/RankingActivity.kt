@@ -1,10 +1,7 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.arnaudcayrol.WhatIsThatCloud.utils.RankingItem
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -27,11 +24,11 @@ class RankingActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().reference.child("users")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach(){ // Probably dumb to use a map instead of a list idk
+                snapshot.children.forEach { // Probably dumb to use a map instead of a list idk
                     map[it.key.toString()] = Pair( it.child("username").value.toString() ,it.child("experience").value as Long)
                 }
                 val result = map.toList().sortedBy { (_, value) -> value.second}.toMap()
-                result.forEach(){
+                result.forEach {
                     adapter.add(0, RankingItem(it.value.first, it.value.second.toString()))
 
                 }

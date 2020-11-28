@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:background="@color/sky_blue"
-    android:backgroundTint="@color/blue_green">
+    android:layout_height="100dp">
 
     <ImageView
         android:id="@+id/nav_header_img"
