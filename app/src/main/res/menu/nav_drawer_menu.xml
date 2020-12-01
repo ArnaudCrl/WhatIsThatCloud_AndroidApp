@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/classment"
+        android:title="@string/classement" />
+
+    <item
+        android:id="@+id/user_guide"
+        android:title="@string/guide_d_utilisateur" />
+
+    <item
+        android:id="@+id/show_tuto"
+        android:title="@string/afficher_les_tutorials" />
+
+    <group android:id="@+id/acount_managment">
+
+        <item
+            android:id="@+id/change_name"
+            android:title="@string/changer_de_nom_d_utilisateur" />
+        <item
+            android:id="@+id/deconnexion"
+            android:title="@string/se_d_connecter" />
+        <item
+            android:id="@+id/connexion"
+            android:title="@string/se_connecter" />
+        <item
+            android:id="@+id/delete_account"
+            android:title="@string/supprimer_mon_compte" />
+
+
+    </group>
+</menu>

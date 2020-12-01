@@ -1,102 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackgroundDark"
-    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/LinearLayoutCameraGalery"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_activity_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnTakePic"
-            style="@android:style/Widget.Holo.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="65dp"
-            android:layout_weight="0.5"
-            android:background="@drawable/square_blue_button"
-            android:fontFamily="@font/montserrat"
-            android:text="@string/take_picture" />
-
-        <Button
-            android:id="@+id/btnOpenGalery"
-            style="@android:style/Widget.Holo.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="65dp"
-            android:layout_weight="0.5"
-            android:background="@drawable/square_blue_button"
-            android:fontFamily="@font/montserrat"
-            android:text="@string/OpenGalery" />
-    </LinearLayout>
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_above="@+id/txtUserNotification"
-        android:layout_below="@+id/LinearLayoutCameraGalery"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_height="match_parent">
 
 
-    <Button
-        android:id="@+id/btnDisplayResult"
-        style="@android:style/Widget.Button"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/new_observation_button"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/ic_twotone_control_point_24"
+            android:backgroundTint="@color/sky_blue"
+            android:elevation="10dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible" />
+
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="?android:windowBackground"
+            android:elevation="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tabGravity="center"
+            app:tabMode="fixed" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/tabs_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tab_layout">
+
+        </androidx.viewpager2.widget.ViewPager2>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_new_activity_selector"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:background="@drawable/top_border"
+
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+
+            <Button
+                android:id="@+id/btn_camera"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@drawable/ic_baseline_camera_alt_24"
+                app:layout_constraintBottom_toTopOf="@+id/textView"
+                app:layout_constraintEnd_toStartOf="@+id/btn_gallery"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <Button
+                android:id="@+id/btn_gallery"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:background="@drawable/ic_baseline_image_24"
+                app:layout_constraintBottom_toTopOf="@+id/textView2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btn_camera"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserrat"
+                android:text="@string/take_pic"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/btn_camera"
+                app:layout_constraintStart_toStartOf="@+id/btn_camera"
+                app:layout_constraintTop_toBottomOf="@+id/btn_camera" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserrat"
+                android:text="@string/choose_pic"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/btn_gallery"
+                app:layout_constraintStart_toStartOf="@+id/btn_gallery"
+                app:layout_constraintTop_toBottomOf="@+id/btn_gallery" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_baseline_double_arrow_24"
+                android:backgroundTint="@color/light_gray"
+                android:rotation="90"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textView2"
+                app:layout_constraintStart_toEndOf="@+id/textView" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="35dp"
-        android:background="@drawable/oval_grey_button"
-        android:fontFamily="@font/montserrat"
-        android:text="@string/what_is_it"
-        android:textAlignment="center"
-        android:textColor="@color/colorTextGrey"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:layout_height="match_parent"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_drawer_menu"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true" >
 
-    <TextView
-        android:id="@+id/txtUserNotification"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btnDisplayResult"
-        android:layout_marginBottom="10dp"
-        android:isScrollContainer="true"
-        android:textAlignment="center"
-        android:textColor="@color/colorTextLight" />
+    </com.google.android.material.navigation.NavigationView>
 
-    <ImageView
-        android:id="@+id/img_BakgroundSketch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignWithParentIfMissing="false"
-        android:layout_above="@id/btnDisplayResult"
-        android:layout_below="@id/LinearLayoutCameraGalery"
-        android:cropToPadding="false"
-        app:srcCompat="@drawable/background_sketch_small" />
 
-    <TextView
-        android:id="@+id/Signature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:fontFamily="@font/montserrat"
-        android:text="Arnaud Cayrol"
-        android:textColor="#AEAEAE"
-        android:textSize="9sp"
-        android:textStyle="italic" />
-
-</RelativeLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
