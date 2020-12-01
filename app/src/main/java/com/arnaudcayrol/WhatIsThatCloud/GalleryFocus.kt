@@ -57,12 +57,12 @@ class GalleryFocus : AppCompatActivity() {
 
                 if (current_user.uid == user_picture.uid){
                     val vous_pensez = this@GalleryFocus.getString(R.string.vous_pensez)
-                    txt_username_prediction.text = vous_pensez + user_picture.prediction.toString()
+                    txt_username_prediction.text = vous_pensez + " " + user_picture.prediction.toString()
                     user_is_author = true
                     invalidateOptionsMenu()
                 } else {
                     val xxx_pense_que = this@GalleryFocus.getString(R.string.xxx_pense_que)
-                    txt_username_prediction.text = user_picture.author.toString() + xxx_pense_que + user_picture.prediction.toString()
+                    txt_username_prediction.text = user_picture.author.toString() + " " + xxx_pense_que + " " + user_picture.prediction.toString()
                 }
 
 

@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         // Menu
         if (FirebaseAuth.getInstance().currentUser!!.isAnonymous) {
             nav_view.menu.findItem(R.id.deconnexion).isVisible = false
-            nav_view.menu.findItem(R.id.change_name).isVisible = false
+//            nav_view.menu.findItem(R.id.change_name).isVisible = false
         } else {
             nav_view.menu.findItem(R.id.connexion).isVisible = false
         }
@@ -256,7 +256,7 @@ class MainActivity : AppCompatActivity() {
                 val xp = p0.child("experience").value as Long
                 val level = (ln((xp / 100).toDouble()) / ln(2.1) + 2).coerceAtLeast(1.0)
                 val level_string = this@MainActivity.getString(R.string.level)
-                nav_header_level.text = level_string + level.toInt().toString()
+                nav_header_level.text = level_string + " " + level.toInt().toString()
 
                 when {
                     level.toInt() == 1 -> {

@@ -29,8 +29,9 @@ class RankingActivity : AppCompatActivity() {
                 }
                 val result = map.toList().sortedBy { (_, value) -> value.second}.toMap()
                 result.forEach {
-                    adapter.add(0, RankingItem(it.value.first, it.value.second.toString()))
-
+                    if (it.value.second > 0)  {
+                        adapter.add(0, RankingItem(it.value.first, it.value.second.toString()))
+                    }
                 }
                 rank_recycler_view.adapter = adapter
             }
