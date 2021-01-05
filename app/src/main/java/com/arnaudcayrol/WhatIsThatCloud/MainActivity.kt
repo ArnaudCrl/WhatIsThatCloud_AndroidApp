@@ -181,6 +181,10 @@ class MainActivity : AppCompatActivity() {
             openGallery()
         }
 
+        swipe_down_image.setOnClickListener{
+            layout_new_activity_selector.isVisible = false
+            new_observation_button.isVisible = true
+        }
 
     }
 

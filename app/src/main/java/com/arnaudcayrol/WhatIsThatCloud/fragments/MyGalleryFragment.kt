@@ -34,14 +34,23 @@ class MyGalleryFragment : Fragment(R.layout.fragment_my_gallery) {
 
         adapter.setOnItemClickListener { item, _ ->
 
-            val extra = item as CloudGridItem
-            val item_ref = extra.ref
+            val images_ref_list : ArrayList<String> = ArrayList()
+            imagelist.forEach() {
+                images_ref_list.add(it.value.image_ref)
+            }
+
+            val cloud_grid_item = item as CloudGridItem
+            val item_ref = cloud_grid_item.ref
 
             item_ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         val intent = Intent(activity, GallerySwipe::class.java)
-                        intent.putExtra("picture", extra.image_ref)
+//                        intent.putExtra("picture", extra.image_ref)
+                        intent.putExtra("pictures_ref", images_ref_list)
+                        intent.putExtra("current_ref", cloud_grid_item.image_ref)
+//                        Log.d("swipe_test", images_ref_list.size.toString())
+
                         startActivity(intent)
                     } else {
                         updateGallery()
