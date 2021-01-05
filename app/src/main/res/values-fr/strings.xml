@@ -47,8 +47,8 @@
     <string name="se_d_connecter">Se déconnecter</string>
     <string name="se_connecter">Se connecter</string>
     <string name="supprimer_mon_compte">Supprimer mon compte</string>
-    <string name="vous_pensez">Vous pensez qu\'il s\'agit d\'un </string>
-    <string name="xxx_pense_que"> pense qu\'il s\'agit d\'un </string>
+    <string name="vous_pensez">Vous pensez qu\'il s\'agit d\'un</string>
+    <string name="xxx_pense_que">pense qu\'il s\'agit d\'un</string>
     <string name="level">Niveau </string>
     <string name="choose_pic">Choisir une image</string>
     <string name="see_examples">Voir des exemples</string>

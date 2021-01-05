@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 object ChangeUsername {
 
     fun changeUsername(uid : String, new_name : String){
-        Log.d("loginChangeUSername", "username : $new_name")
+        Log.d("loginChangeUsername", "username : $new_name")
 
         val ref = FirebaseDatabase.getInstance().getReference("users/$uid")
         ref.child("username").setValue(new_name)
@@ -50,7 +50,9 @@ object ChangeUsername {
 
         // Return if the username
         // matched the ReGex
-        return m.matches()
+
+//        return m.matches()
+        return true // TODO fix the username check
     }
 
 }

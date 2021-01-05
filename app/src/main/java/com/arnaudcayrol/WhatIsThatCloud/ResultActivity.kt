@@ -20,8 +20,7 @@ import com.arnaudcayrol.WhatIsThatCloud.utils.UserPicture
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetSequence
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ServerValue
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.component1
 import com.google.firebase.storage.ktx.component2
@@ -30,6 +29,7 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_result.*
 import java.util.*
+import kotlin.math.ln
 
 class ResultActivity : AppCompatActivity() {
 
@@ -137,28 +137,26 @@ class ResultActivity : AppCompatActivity() {
 
 
     private fun updateRecyclerView(cloud_type: String) {
-        Log.d("examples", cloud_type)
 
         FirebaseStorage.getInstance().getReference("examples/${cloud_type.toLowerCase(Locale.ROOT)}")
             .listAll()
             .addOnSuccessListener { (items, prefixes) ->
                 prefixes.forEach { _ ->
                 }
-
+                adapter.clear()
                 items.forEach { item ->
-//                    Log.d("examples", "working")
-
                     item.downloadUrl.addOnSuccessListener {
-                        Log.d("examples", it.toString())
-
                         adapter.add(ExampleResultItem(it.toString()))
+                        Log.d("examples", "added one url")
+
                     }
                 }
+
                 recyclerViewClouds.adapter = adapter
             }
+
             .addOnFailureListener {
                 Log.d("examples", it.toString())
-
             }
     }
 
@@ -234,20 +232,25 @@ class ResultActivity : AppCompatActivity() {
                 storageRef.downloadUrl.addOnSuccessListener {url ->
 
                     // Add to Firebase Database
-                    val username = if (user!!.isAnonymous) "Anonymous" else user.displayName.toString()
+                    val ref = FirebaseDatabase.getInstance().getReference("/users/${user?.uid}")
+                    ref.addListenerForSingleValueEvent(object: ValueEventListener {
+                        override fun onDataChange(p0: DataSnapshot) {
+                            val username = if (user!!.isAnonymous) "Anonymous" else p0.child("username").value as String
+                            val databaseRef = FirebaseDatabase.getInstance().getReference("/users/${user.uid}/pictures/$filename")
+                            val userPicture = UserPicture(user.uid, url.toString(), username, cloudList.resultList[pageNumber].first)
+                            databaseRef.setValue(userPicture)
+                                .addOnSuccessListener {
+                                    ref.child("experience").setValue(ServerValue.increment(100)) // Gives 100 xp to user for submitting an image
+                                    playXPGainAnimation()
+                                    Log.d("firebaseDatabase", "Successfully added image to database")
+                                }
+                                .addOnFailureListener {exception ->
+                                    Log.d("firebaseDatabase", "Failed to set value to database: ${exception.message}")
+                                }
+                        }
+                        override fun onCancelled(p0: DatabaseError) {  }
+                    })
 
-                    val databaseRef = FirebaseDatabase.getInstance().getReference("/users/${user.uid}/pictures/$filename")
-                    val userPicture = UserPicture(user.uid, url.toString(), username, cloudList.resultList[pageNumber].first)
-                    databaseRef.setValue(userPicture)
-                        .addOnSuccessListener {
-                            val ref = FirebaseDatabase.getInstance().getReference("/users/${user.uid}")
-                            ref.child("experience").setValue(ServerValue.increment(100)) // Gives 100 xp to user for submitting an image
-                            playXPGainAnimation()
-                            Log.d("firebaseDatabase", "Successfully added image to database")
-                        }
-                        .addOnFailureListener {exception ->
-                            Log.d("firebaseDatabase", "Failed to set value to database: ${exception.message}")
-                        }
                 }
             }
             .addOnFailureListener {

@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.arnaudcayrol.WhatIsThatCloud.GalleryFocus
+import com.arnaudcayrol.WhatIsThatCloud.GallerySwipe
 import com.arnaudcayrol.WhatIsThatCloud.R
 import com.arnaudcayrol.WhatIsThatCloud.utils.CloudGridItem
 import com.google.firebase.auth.FirebaseAuth
@@ -40,7 +40,7 @@ class MyGalleryFragment : Fragment(R.layout.fragment_my_gallery) {
             item_ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        val intent = Intent(activity, GalleryFocus::class.java)
+                        val intent = Intent(activity, GallerySwipe::class.java)
                         intent.putExtra("picture", extra.image_ref)
                         startActivity(intent)
                     } else {

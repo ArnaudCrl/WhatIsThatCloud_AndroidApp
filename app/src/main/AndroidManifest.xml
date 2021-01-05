@@ -14,10 +14,10 @@
         android:roundIcon="@drawable/whatisthatcloudicon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UserGuideActivity"></activity>
+        <activity android:name=".UserGuideActivity" />
         <activity android:name=".RankingActivity" /> <!-- Activities -->
         <activity android:name=".MainActivity" />
-        <activity android:name=".GalleryFocus">
+        <activity android:name=".GallerySwipe">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

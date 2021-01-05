@@ -29,16 +29,15 @@ import com.arnaudcayrol.WhatIsThatCloud.network.API_obj
 import com.arnaudcayrol.WhatIsThatCloud.network.CloudList
 import com.arnaudcayrol.WhatIsThatCloud.registration.LoginActivity
 import com.arnaudcayrol.WhatIsThatCloud.utils.BitmapManipulation
+import com.arnaudcayrol.WhatIsThatCloud.utils.CloudGridItem
 import com.arnaudcayrol.WhatIsThatCloud.utils.FileManipluation
 import com.arnaudcayrol.WhatIsThatCloud.utils.TabsPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_global_gallery.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -47,6 +46,8 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.ln
 
 
@@ -54,8 +55,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var toggle: ActionBarDrawerToggle // For menu
     private lateinit var current_user : FirebaseUser
-    private val REQUEST_CODE_TAKE_PICTURE = 1
-    private val REQUEST_CODE_SELECT_PICTURE = 2
+    private val REQUEST_CODE_TAKE_PICTURE = 63
+    private val REQUEST_CODE_SELECT_PICTURE = 1337
     private lateinit var pictureUri : Uri
     private lateinit var photoFile: File
     private lateinit var photoFile224: File
@@ -65,6 +66,31 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+//        ///////////////////////////////////////////
+//        val ref = FirebaseDatabase.getInstance().getReference("/users")
+//        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+//            override fun onDataChange(p0: DataSnapshot) {
+//
+//                p0.children.forEach {user -> // Iterate over users
+//                    val username = user.child("username").value as String
+//                    user.child("pictures").children.forEach{pictures -> // Iterate over pictures
+//                        val author = pictures.child("author").value as String
+//
+//                        if (username != author) {
+//                            pictures.child("author").ref.setValue(username)
+//                        }
+//                    }
+//                }
+//            }
+//
+//            override fun onCancelled(p0: DatabaseError) {
+//                Log.d("fetchUsers", "error : $p0")
+//            }
+//        })
+//
+//        ///////////////////////////////////////////
 
         current_user = FirebaseAuth.getInstance().currentUser!!
 
@@ -309,11 +335,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun takePicture() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        photoFile = FileManipluation.getPhotoFile(this, "tempPhoto.jpg")
+        photoFile = FileManipluation.getPhotoFile(this, SimpleDateFormat("yyyyMMdd_HHmmss").format(Date()))
 
         //TODO Is this the same as pictureUri ?
-        val fileProvider = FileProvider.getUriForFile(this, "com.arnaudcayrol.WhatIsThatCloud.fileprovider", photoFile)
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+        val photoUri = FileProvider.getUriForFile(this, "com.arnaudcayrol.WhatIsThatCloud.fileprovider", photoFile)
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
 
         if (takePictureIntent.resolveActivity(this.packageManager) != null) {
             startActivityForResult(takePictureIntent, REQUEST_CODE_TAKE_PICTURE)
