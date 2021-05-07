@@ -61,36 +61,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var photoFile: File
     private lateinit var photoFile224: File
     private  lateinit var loading_dialog : AlertDialog
+    private lateinit var tabAdapter : TabsPagerAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-//        ///////////////////////////////////////////
-//        val ref = FirebaseDatabase.getInstance().getReference("/users")
-//        ref.addListenerForSingleValueEvent(object: ValueEventListener {
-//            override fun onDataChange(p0: DataSnapshot) {
-//
-//                p0.children.forEach {user -> // Iterate over users
-//                    val username = user.child("username").value as String
-//                    user.child("pictures").children.forEach{pictures -> // Iterate over pictures
-//                        val author = pictures.child("author").value as String
-//
-//                        if (username != author) {
-//                            pictures.child("author").ref.setValue(username)
-//                        }
-//                    }
-//                }
-//            }
-//
-//            override fun onCancelled(p0: DatabaseError) {
-//                Log.d("fetchUsers", "error : $p0")
-//            }
-//        })
-//
-//        ///////////////////////////////////////////
 
         current_user = FirebaseAuth.getInstance().currentUser!!
 
@@ -116,7 +93,7 @@ class MainActivity : AppCompatActivity() {
 
 
         // Tabs
-        val tabAdapter = TabsPagerAdapter(supportFragmentManager, lifecycle, 2)
+        tabAdapter = TabsPagerAdapter(supportFragmentManager, lifecycle, 2)
         tabs_viewpager.adapter = tabAdapter
         tabs_viewpager.isUserInputEnabled = true
         val my_observations = this.getString(R.string.my_observations)
@@ -163,15 +140,6 @@ class MainActivity : AppCompatActivity() {
         builder.setView(R.layout.loading)
         loading_dialog = builder.create()
 
-
-        CoroutineScope(Job() + Dispatchers.Main ).launch {
-            try {
-                API_obj.retrofitService.wakeupServer().await()
-            }
-            catch (e: Exception) {
-                // This wakes up the server to gain time, so it is supposed to throw an exception if the server is not awake
-            }
-        }
 
         btn_camera.setOnClickListener{
             takePicture()
@@ -281,6 +249,7 @@ class MainActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().getReference("/users/${current_user.uid}")
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
+                if(!p0.exists()) { return }
                 name_nav_header.text = p0.child("username").value.toString()
 
                 val xp = p0.child("experience").value as Long
@@ -438,6 +407,16 @@ class MainActivity : AppCompatActivity() {
 
         return builder.create()
     }
+
+
+//    private fun save_last_displayed_tab(){
+//        val tab = tabAdapter.getc
+//        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+//        with (sharedPref.edit()) {
+//            putInt(getString(R.string.main_actyvity_last_opened_tab), tab.toInt())
+//            apply()
+//        }
+//    }
 
 
 }

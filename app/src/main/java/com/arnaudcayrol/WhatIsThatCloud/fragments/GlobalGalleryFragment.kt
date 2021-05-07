@@ -50,7 +50,7 @@ class GlobalGalleryFragment : Fragment(R.layout.fragment_global_gallery) {
 //                        intent.putExtra("picture", extra.image_ref)
                         intent.putExtra("pictures_ref", images_ref_list)
                         intent.putExtra("current_ref", cloud_grid_item.image_ref)
-                        Log.d("swipe_test", images_ref_list.size.toString())
+//                        Log.d("swipe_test", images_ref_list.size.toString())
 
                         startActivity(intent)
                     } else {
@@ -77,6 +77,8 @@ class GlobalGalleryFragment : Fragment(R.layout.fragment_global_gallery) {
         val ref = FirebaseDatabase.getInstance().getReference("/users")
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
+
+                if(!p0.exists()) { return }
 
                 p0.children.forEach {user -> // Iterate over users
 

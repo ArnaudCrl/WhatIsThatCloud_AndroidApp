@@ -235,6 +235,7 @@ class ResultActivity : AppCompatActivity() {
                     val ref = FirebaseDatabase.getInstance().getReference("/users/${user?.uid}")
                     ref.addListenerForSingleValueEvent(object: ValueEventListener {
                         override fun onDataChange(p0: DataSnapshot) {
+                            if(!p0.exists()) { return }
                             val username = if (user!!.isAnonymous) "Anonymous" else p0.child("username").value as String
                             val databaseRef = FirebaseDatabase.getInstance().getReference("/users/${user.uid}/pictures/$filename")
                             val userPicture = UserPicture(user.uid, url.toString(), username, cloudList.resultList[pageNumber].first)

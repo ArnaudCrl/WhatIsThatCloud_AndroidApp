@@ -24,12 +24,13 @@ class RankingActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().reference.child("users")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                if(!snapshot.exists()) { return }
                 snapshot.children.forEach { // Probably dumb to use a map instead of a list idk
                     map[it.key.toString()] = Pair( it.child("username").value.toString() ,it.child("experience").value as Long)
                 }
                 val result = map.toList().sortedBy { (_, value) -> value.second}.toMap()
                 result.forEach {
-                    if (it.value.second > 0)  {
+                    if (it.value.first != "Anonymous" && it.value.first != "" && it.value.second > 0)  {
                         adapter.add(0, RankingItem(it.value.first, it.value.second.toString()))
                     }
                 }

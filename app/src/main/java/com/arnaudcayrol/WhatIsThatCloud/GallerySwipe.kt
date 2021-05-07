@@ -56,8 +56,9 @@ class GallerySwipe : AppCompatActivity() {
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
+                if(!p0.exists()) { return }
                 val author_uid = p0.child("uid").value.toString()
-                user_is_author = current_user.uid == author_uid
+                user_is_author = current_user.uid == author_uid || current_user.uid == "DG8GLZQbufMkAuGM7DW8ctJxo3d2" // My uid
                 invalidateOptionsMenu()
             }
 
@@ -73,7 +74,7 @@ class GallerySwipe : AppCompatActivity() {
         searchItem?.isVisible = false
         if (user_is_author){
             searchItem?.isVisible = true
-        }
+        } //else {searchItem?.isVisible = true} //TODO : remove that for relase
 
         return super.onCreateOptionsMenu(menu)
     }

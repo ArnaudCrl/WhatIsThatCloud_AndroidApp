@@ -37,7 +37,7 @@
     <string name="comment_prendre_une_photo">How to take a good picture</string>
     <string name="comment_gagner_de_l_experience">How to gain experience</string>
     <string name="tuto_experience">You can gain experience in two ways:  The first is simply taking a picture of a cloud and validating a name.  The second way is to validate or invalidate a cloud name chosen by another user. To do this go to the community tab and click on the picture of another user. If you agree with his choice, you both gain experience, if you think the other user is wrong, only you gain experience. If you are not sure, refer to the examples by clicking on \"see examples\".</string>
-    <string name="welcome">Welcome! To get started, make your first observation by clicking on the button below :</string>
+    <string name="welcome">Welcome! To get started, make your first observation by clicking on the button below :  You can also view what other users have submited by swiping left</string>
     <string name="delete">Delete</string>
     <string name="loading">Loading...</string>
     <string name="classement">Ranking</string>
@@ -49,8 +49,8 @@
     <string name="supprimer_mon_compte">Delete my account</string>
     <string name="google_login">Log in with Google</string>
     <string name="facebook_login">Log in with Facebook</string>
-    <string name="vous_pensez">You think that it is a</string>
-    <string name="xxx_pense_que">thinks that it is a</string>
+    <string name="vous_pensez">You think that this is a</string>
+    <string name="xxx_pense_que">thinks that this is a</string>
     <string name="level">"Level "</string>
     <string name="see_examples">See examples</string>
     <string name="communauty">Communauty</string>

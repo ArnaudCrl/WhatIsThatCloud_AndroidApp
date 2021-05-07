@@ -78,7 +78,7 @@ class MyGalleryFragment : Fragment(R.layout.fragment_my_gallery) {
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
-
+                if(!p0.exists()) { return }
                 p0.child("pictures").children.forEach{pictures -> // Iterate over pictures
                     val database_ref = pictures.ref.toString()
                     val date_uploaded = pictures.child("date_uploaded").value

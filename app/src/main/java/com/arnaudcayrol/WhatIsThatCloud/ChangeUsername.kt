@@ -18,6 +18,7 @@ object ChangeUsername {
 
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                if(!snapshot.exists()) { return }
                 snapshot.child("pictures").children.forEach {
                     it.child("author").ref.setValue(new_name)
                 }

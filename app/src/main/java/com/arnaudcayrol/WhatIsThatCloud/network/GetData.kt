@@ -11,7 +11,8 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 
 private const val BASE_URL =
-    "https://whatisthatcloud.herokuapp.com/"
+    "https://what-is-that-cloud-flask.herokuapp.com/"
+//    "https://whatisthatcloud.herokuapp.com/"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -35,7 +36,7 @@ interface WebServerAPI {
     @POST("/feedback")
         fun uploadFeedbackAsync(@Part file: MultipartBody.Part?): Deferred<Feedback>
 
-    @POST("/wakeup")
+    @POST("/ping")
         fun wakeupServer(): Deferred<Void>
 }
 

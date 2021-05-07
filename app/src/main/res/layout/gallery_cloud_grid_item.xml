@@ -12,31 +12,5 @@
         android:padding="2dp"
         android:src="@color/white" />
 
-    <TextView
-        android:id="@+id/fav_icon"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
-        android:background="@drawable/ic_baseline_favorite_24"
-        android:backgroundTint="@color/favorite_red"
-        android:elevation="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/cloud_image" />
-
-    <TextView
-        android:id="@+id/txt_like_counter"
-        android:layout_width="20sp"
-        android:layout_height="20sp"
-        android:text=""
-        android:gravity="center"
-        android:textColor="@color/favorite_red"
-        android:elevation="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/fav_icon"
-        app:layout_constraintEnd_toStartOf="@+id/fav_icon"
-        app:layout_constraintTop_toTopOf="@+id/fav_icon" />
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

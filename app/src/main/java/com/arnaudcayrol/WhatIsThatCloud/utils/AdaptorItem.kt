@@ -34,9 +34,10 @@ class CloudGridItem(val image_ref : String): Item<ViewHolder>() {
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
+                if(!p0.exists()) { return }
                 val user_picture = p0.getValue(UserPicture::class.java) ?: return
                 Picasso.get().load(user_picture.url).resize(256,256).centerCrop().into(viewHolder.itemView.cloud_image)
-                viewHolder.itemView.txt_like_counter.text = user_picture.fav_count.toString()
+//                viewHolder.itemView.txt_like_counter.text = user_picture.fav_count.toString()
             }
 
             override fun onCancelled(p0: DatabaseError) {

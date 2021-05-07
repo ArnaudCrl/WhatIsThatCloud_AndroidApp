@@ -37,7 +37,7 @@
     <string name="comment_prendre_une_photo">Comment prendre une bonne photo</string>
     <string name="comment_gagner_de_l_experience">Comment gagner de l\'experience</string>
     <string name="tuto_experience">Vous pouvez gagner de l\'expérience de deux façons :  La première consiste simplement à prendre une photo d\'un nuage et de valider un nom.  La deuxième manière consiste à valider ou invalider un choix de nom de nuage fait par un autre utilisateur. Pour cela rendez-vous dans l\'onglet communauté et cliquez sur une image d\'un autre utilisateur. Si vous êtes d\'accord avec l\'autre utilisateur, vous gagnez tous les deux de l\'expérience, si vous pensez que l\'autre utilisateur d\'est trompé, vous seul gagnez de l\'expérience. Si vous n\'êtes pas sur, référez vous aux exemples en cliquant sur \"voir des exemples\".</string>
-    <string name="welcome">Bienvenue !\nPour commencer, faites votre première observation en cliquant sur le bouton ci dessous :</string>
+    <string name="welcome">Bienvenue ! Pour commencer, faites votre première observation en cliquant sur le bouton ci dessous :\n\nVous pouvez également voir ce que les autres utilisateurs ont soumis en glissant vers la gauche</string>
     <string name="delete">Delete</string>
     <string name="loading">Loading…</string>
     <string name="classement">Classement</string>

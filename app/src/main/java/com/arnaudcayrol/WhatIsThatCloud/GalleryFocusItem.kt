@@ -1,36 +1,25 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
-import android.app.AlertDialog
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat.invalidateOptionsMenu
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.ViewPager2
 import com.airbnb.lottie.LottieAnimationView
 import com.arnaudcayrol.WhatIsThatCloud.utils.UserPicture
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.gallery_focus_item.*
 import kotlinx.android.synthetic.main.gallery_focus_item.view.*
 
 class SwipeGalleryViewPagerAdapter(private var image_refs : ArrayList<String>) : RecyclerView.Adapter<SwipeGalleryViewPagerAdapter.ViewPagerVieHolder>() {
 
     private val current_user = FirebaseAuth.getInstance().currentUser!!
-    private var userHasLiked = false
 
     inner class ViewPagerVieHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
 
@@ -38,23 +27,35 @@ class SwipeGalleryViewPagerAdapter(private var image_refs : ArrayList<String>) :
         val xp_gain_animation : LottieAnimationView = itemView.findViewById(R.id.xp_gain_animation)
         val btn_approve : Button = itemView.findViewById(R.id.btn_approve)
         val btn_disapprove : Button = itemView.findViewById(R.id.btn_disapprove)
-        val gallery_focus_heart : Button = itemView.findViewById(R.id.gallery_focus_heart)
-        val focus_txt_like_counter : TextView = itemView.findViewById(R.id.focus_txt_like_counter)
+
 
         fun startExampleGridActivity(image_ref : String){
-
             val ref = FirebaseDatabase.getInstance().getReferenceFromUrl(image_ref + "/prediction")
             ref.addListenerForSingleValueEvent(object: ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
-
+                override fun onCancelled(error: DatabaseError) {}
                 override fun onDataChange(p0: DataSnapshot) {
-                    val intent = Intent(itemView.context, CloudExampleGrid::class.java)
+                    if(!p0.exists()) { return }
+                    val intent = Intent(itemView.context, CloudExampleGridActivity::class.java)
                     intent.putExtra("cloud_type", p0.value.toString().toLowerCase())
                     startActivity(itemView.context, intent, null)
                 }
             })
+
+        }
+
+        fun startUserProfilePageActivity(image_ref : String){
+            val ref = FirebaseDatabase.getInstance().getReferenceFromUrl(image_ref + "/uid")
+            ref.addListenerForSingleValueEvent(object: ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {}
+                override fun onDataChange(p0: DataSnapshot) {
+                    if(!p0.exists()) { return }
+                    val intent = Intent(itemView.context, UserProfilePageActivity::class.java)
+                    intent.putExtra("uid", p0.value.toString())
+                    startActivity(itemView.context, intent, null)
+                }
+            })
+
+
 
         }
 
@@ -78,45 +79,47 @@ class SwipeGalleryViewPagerAdapter(private var image_refs : ArrayList<String>) :
             }.start()
         }
 
-        fun onHeartClicked(postRef: DatabaseReference) {
-            postRef.runTransaction(object : Transaction.Handler {
-                override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                    val p = mutableData.getValue(UserPicture::class.java) ?: return Transaction.success(mutableData)
-
-                    if (p.fav.containsKey(current_user.uid)) {
-                        p.fav_count = p.fav_count - 1
-                        p.fav.remove(current_user.uid)
-                    } else {
-                        p.fav_count = p.fav_count + 1
-                        p.fav[current_user.uid] = true
-                    }
-
-                    // Set value and report transaction success
-                    mutableData.value = p
-                    return Transaction.success(mutableData)
-                }
-
-                override fun onComplete(
-                    databaseError: DatabaseError?,
-                    committed: Boolean,
-                    currentData: DataSnapshot?
-                ) {
-                    if (committed){
-                        if (userHasLiked) {
-                            gallery_focus_heart.setBackgroundResource(R.drawable.ic_baseline_favorite_border_24)
-                            gallery_focus_heart.background.setTint(ContextCompat.getColor(itemView.context, R.color.grey))
-                            focus_txt_like_counter.text = (focus_txt_like_counter.text.toString().toInt() - 1).toString()
-                            userHasLiked = false
-                        } else {
-                            gallery_focus_heart.setBackgroundResource(R.drawable.ic_baseline_favorite_24)
-                            gallery_focus_heart.background.setTint(ContextCompat.getColor(itemView.context, R.color.favorite_red))
-                            focus_txt_like_counter.text = (focus_txt_like_counter.text.toString().toInt() +  1).toString()
-                            userHasLiked = true
-                        }
-                    }
-                }
-            })
-        }
+//        fun onHeartClicked(postRef: DatabaseReference) {
+//            postRef.runTransaction(object : Transaction.Handler {
+//                override fun doTransaction(mutableData: MutableData): Transaction.Result {
+//                    val p = mutableData.getValue(UserPicture::class.java) ?: return Transaction.success(mutableData)
+//
+//                    if (p.fav.containsKey(current_user.uid)) {
+//                        userHasLiked = true
+//                        p.fav_count = p.fav_count - 1
+//                        p.fav.remove(current_user.uid)
+//                    } else {
+//                        userHasLiked = false
+//                        p.fav_count = p.fav_count + 1
+//                        p.fav[current_user.uid] = true
+//                    }
+//
+//                    // Set value and report transaction success
+//                    mutableData.value = p
+//                    return Transaction.success(mutableData)
+//                }
+//
+//                override fun onComplete(
+//                    databaseError: DatabaseError?,
+//                    committed: Boolean,
+//                    currentData: DataSnapshot?
+//                ) {
+//                    if (committed){
+//                        if (userHasLiked) {
+//                            gallery_focus_heart.setBackgroundResource(R.drawable.ic_baseline_favorite_border_24)
+//                            gallery_focus_heart.background.setTint(ContextCompat.getColor(itemView.context, R.color.grey))
+//                            focus_txt_like_counter.text = (focus_txt_like_counter.text.toString().toInt() - 1).toString()
+//                            userHasLiked = false
+//                        } else {
+//                            gallery_focus_heart.setBackgroundResource(R.drawable.ic_baseline_favorite_24)
+//                            gallery_focus_heart.background.setTint(ContextCompat.getColor(itemView.context, R.color.favorite_red))
+//                            focus_txt_like_counter.text = (focus_txt_like_counter.text.toString().toInt() +  1).toString()
+//                            userHasLiked = true
+//                        }
+//                    }
+//                }
+//            })
+//        }
 
         fun onAgreeClicked(postRef: DatabaseReference, image_ref : String) {
             postRef.runTransaction(object : Transaction.Handler {
@@ -138,6 +141,7 @@ class SwipeGalleryViewPagerAdapter(private var image_refs : ArrayList<String>) :
                         ref.addListenerForSingleValueEvent(object: ValueEventListener {
                             override fun onCancelled(error: DatabaseError) {}
                             override fun onDataChange(p0: DataSnapshot) {
+                                if(!p0.exists()) { return }
                                 val author_uid = p0.value.toString()
                                 val author_ref = FirebaseDatabase.getInstance().getReference("/users/${author_uid}")
                                 author_ref.child("experience").setValue(ServerValue.increment(20))
@@ -196,17 +200,18 @@ class SwipeGalleryViewPagerAdapter(private var image_refs : ArrayList<String>) :
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
+                if(!p0.exists()) { return }
                 val user_picture = p0.getValue<UserPicture>()!!
 
-                if (user_picture.fav.containsKey(current_user.uid)) { // If user already liked the photo
-                    holder.itemView.gallery_focus_heart.setBackgroundResource(R.drawable.ic_baseline_favorite_24)
-                    holder.itemView.gallery_focus_heart.background.setTint(ContextCompat.getColor(holder.itemView.context, R.color.favorite_red))
-                    userHasLiked = true
-                } else { // If user didn't already like the photo
-                    holder.itemView.gallery_focus_heart.setBackgroundResource(R.drawable.ic_baseline_favorite_border_24)
-                    holder.itemView.gallery_focus_heart.background.setTint(ContextCompat.getColor(holder.itemView.context, R.color.grey))
-                    userHasLiked = false
-                }
+//                if (user_picture.fav.containsKey(current_user.uid)) { // If user already liked the photo
+//                    holder.itemView.gallery_focus_heart.setBackgroundResource(R.drawable.ic_baseline_favorite_24)
+//                    holder.itemView.gallery_focus_heart.background.setTint(ContextCompat.getColor(holder.itemView.context, R.color.favorite_red))
+//                    userHasLiked = true
+//                } else { // If user didn't already like the photo
+//                    holder.itemView.gallery_focus_heart.setBackgroundResource(R.drawable.ic_baseline_favorite_border_24)
+//                    holder.itemView.gallery_focus_heart.background.setTint(ContextCompat.getColor(holder.itemView.context, R.color.grey))
+//                    userHasLiked = false
+//                }
 
                 if (user_picture.agree_with_prediction.containsKey(current_user.uid)
                     || user_picture.disagree_with_prediction.containsKey(current_user.uid)
@@ -226,7 +231,6 @@ class SwipeGalleryViewPagerAdapter(private var image_refs : ArrayList<String>) :
 
 
                 Picasso.get().load(user_picture.url.toString()).into(holder.itemView.gallery_focus_image_view)
-                holder.itemView.focus_txt_like_counter.text = user_picture.fav_count.toString()
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -239,9 +243,8 @@ class SwipeGalleryViewPagerAdapter(private var image_refs : ArrayList<String>) :
         holder.itemView.txt_see_examples.setOnClickListener {
             holder.startExampleGridActivity(image_refs[position])
         }
-
-        holder.itemView.gallery_focus_heart.setOnClickListener {
-            holder.onHeartClicked(ref)
+        holder.itemView.txt_username_prediction.setOnClickListener {
+            holder.startUserProfilePageActivity(image_refs[position])
         }
 
         holder.itemView.btn_approve.setOnClickListener {
