@@ -5,16 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import com.arnaudcayrol.WhatIsThatCloud.utils.CloudGridItem
-import com.arnaudcayrol.WhatIsThatCloud.utils.ExampleGridItem
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.component1
-import com.google.firebase.storage.ktx.component2
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_user_profile_page.*
@@ -45,7 +40,7 @@ class UserProfilePageActivity : AppCompatActivity() {
             item_ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        val intent = Intent(this@UserProfilePageActivity, GallerySwipe::class.java)
+                        val intent = Intent(this@UserProfilePageActivity, GallerySwipeActivity::class.java)
 //                        intent.putExtra("picture", extra.image_ref)
                         intent.putExtra("pictures_ref", images_ref_list)
                         intent.putExtra("current_ref", cloud_grid_item.image_ref)
@@ -80,7 +75,7 @@ class UserProfilePageActivity : AppCompatActivity() {
                     imagelist[(date_uploaded as Long) * -1] = CloudGridItem(database_ref)
                 }
                 txt_user_name.text = p0.child("username").value.toString()
-                txt_user_name.text = uid
+//                txt_user_name.text = uid
 
                 adapter.update(imagelist.values)
                 user_picture_grid_layout.adapter = adapter

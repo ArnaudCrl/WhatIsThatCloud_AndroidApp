@@ -1,7 +1,11 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.arnaudcayrol.WhatIsThatCloud.utils.CloudGridItem
 import com.arnaudcayrol.WhatIsThatCloud.utils.RankingItem
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -26,7 +30,7 @@ class RankingActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(!snapshot.exists()) { return }
                 snapshot.children.forEach { // Probably dumb to use a map instead of a list idk
-                    map[it.key.toString()] = Pair( it.child("username").value.toString() ,it.child("experience").value as Long)
+                    map[it.key.toString()] = Pair( it.key.toString() ,it.child("experience").value as Long) //{ uid : experience }
                 }
                 val result = map.toList().sortedBy { (_, value) -> value.second}.toMap()
                 result.forEach {
@@ -39,5 +43,14 @@ class RankingActivity : AppCompatActivity() {
 
             override fun onCancelled(error: DatabaseError) {  }
         })
+
+        adapter.setOnItemClickListener { item, _ ->
+            val user = item as RankingItem
+            val intent = Intent(this@RankingActivity, UserProfilePageActivity::class.java)
+            intent.putExtra("uid", user.uid_)
+            ContextCompat.startActivity(this@RankingActivity, intent, null)
+        }
     }
+
+
 }

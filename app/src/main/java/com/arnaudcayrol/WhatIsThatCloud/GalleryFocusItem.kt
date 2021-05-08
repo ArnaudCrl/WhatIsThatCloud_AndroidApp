@@ -1,21 +1,32 @@
 package com.arnaudcayrol.WhatIsThatCloud
 
 import android.content.Intent
+import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Button
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
+import com.arnaudcayrol.WhatIsThatCloud.utils.ColorUtils
 import com.arnaudcayrol.WhatIsThatCloud.utils.UserPicture
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.gallery_focus_item.view.*
+
 
 class SwipeGalleryViewPagerAdapter(private var image_refs : ArrayList<String>) : RecyclerView.Adapter<SwipeGalleryViewPagerAdapter.ViewPagerVieHolder>() {
 
@@ -54,9 +65,6 @@ class SwipeGalleryViewPagerAdapter(private var image_refs : ArrayList<String>) :
                     startActivity(itemView.context, intent, null)
                 }
             })
-
-
-
         }
 
         fun playXPGainAnimation(){
@@ -225,8 +233,18 @@ class SwipeGalleryViewPagerAdapter(private var image_refs : ArrayList<String>) :
                     val vous_pensez = holder.itemView.context.getString(R.string.vous_pensez)
                     holder.itemView.txt_username_prediction.text = vous_pensez + " " + user_picture.prediction.toString()
                 } else {
+
+
                     val xxx_pense_que = holder.itemView.context.getString(R.string.xxx_pense_que)
-                    holder.itemView.txt_username_prediction.text = user_picture.author.toString() + " " + xxx_pense_que + " " + user_picture.prediction.toString()
+                    val username = user_picture.author.toString()
+                    val result = TextUtils.concat(" ",xxx_pense_que," ",user_picture.prediction.toString())
+
+
+                    holder.itemView.txt_username_prediction.setText(username + result, TextView.BufferType.SPANNABLE)
+
+                    val span = holder.itemView.txt_username_prediction.text as Spannable
+                    span.setSpan(ForegroundColorSpan(Color.BLUE), 0, username.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+//                    holder.itemView.txt_username_prediction.text = TextUtils.concat(username, result)
                 }
 
 

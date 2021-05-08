@@ -19,7 +19,7 @@ import com.google.firebase.database.ktx.getValue
 import kotlinx.android.synthetic.main.activity_gallery_swipe.*
 
 
-class GallerySwipe : AppCompatActivity() {
+class GallerySwipeActivity : AppCompatActivity() {
 
     private lateinit var image_refs : ArrayList<String>
     private lateinit var current_ref : String

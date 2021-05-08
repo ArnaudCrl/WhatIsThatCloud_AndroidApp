@@ -6,14 +6,13 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.arnaudcayrol.WhatIsThatCloud.GallerySwipe
+import com.arnaudcayrol.WhatIsThatCloud.GallerySwipeActivity
 import com.arnaudcayrol.WhatIsThatCloud.R
 import com.arnaudcayrol.WhatIsThatCloud.utils.CloudGridItem
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.collection.ImmutableSortedMap
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_global_gallery.*
@@ -46,7 +45,7 @@ class GlobalGalleryFragment : Fragment(R.layout.fragment_global_gallery) {
             item_ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        val intent = Intent(activity, GallerySwipe::class.java)
+                        val intent = Intent(activity, GallerySwipeActivity::class.java)
 //                        intent.putExtra("picture", extra.image_ref)
                         intent.putExtra("pictures_ref", images_ref_list)
                         intent.putExtra("current_ref", cloud_grid_item.image_ref)

@@ -17,15 +17,14 @@
         <activity android:name=".UserGuideActivity" />
         <activity android:name=".RankingActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".GallerySwipe">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+        <activity android:name=".GallerySwipeActivity">
+<!--            <meta-data-->
+<!--                android:name="android.support.PARENT_ACTIVITY"-->
+<!--                android:value=".MainActivity" />-->
         </activity>
         <activity android:name=".registration.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -66,13 +65,12 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
